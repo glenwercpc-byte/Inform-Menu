@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>시카고 언약 장로 교회 – 온라인 정보 센터</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -11,141 +14,187 @@
     body {
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: #f5f4f0;
-      font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
-      padding: 2.5rem 1.5rem;
+      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+      background: linear-gradient(160deg, #0a1a4a 0%, #0f2557 40%, #1a3a7c 70%, #0f2557 100%);
+      padding: 2.5rem 1.25rem;
     }
 
-    .church-title {
-      font-size: clamp(22px, 5vw, 32px);
-      font-weight: 600;
-      color: #1a1a1a;
+    .card {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* 로고 */
+    .logo-img {
+      height: 72px;
+      width: auto;
+      margin-bottom: 1rem;
+      filter: brightness(0) invert(1) drop-shadow(0 2px 12px rgba(120,180,255,0.4));
+      animation: fadeDown 0.6s ease both;
+    }
+
+    /* 교회명 */
+    .church-name {
+      font-size: clamp(16px, 4vw, 20px);
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 2px;
       text-align: center;
-      letter-spacing: -0.5px;
-      margin-bottom: 8px;
+      margin-bottom: 3px;
+      animation: fadeDown 0.65s ease 0.05s both;
     }
-
-    .center-subtitle {
-      font-size: 16px;
-      color: #666;
+    .church-name-en {
+      font-size: 10px;
+      color: rgba(180, 210, 255, 0.65);
+      letter-spacing: 1.5px;
       text-align: center;
-      font-weight: 400;
-      margin-bottom: 2rem;
+      margin-bottom: 1.4rem;
+      animation: fadeDown 0.65s ease 0.1s both;
     }
 
+    /* 배지 */
+    .badge {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      color: #fff;
+      font-size: clamp(14px, 3.5vw, 17px);
+      font-weight: 700;
+      letter-spacing: 4px;
+      padding: 7px 28px;
+      border-radius: 50px;
+      margin-bottom: 1.8rem;
+      animation: fadeDown 0.65s ease 0.15s both;
+    }
+
+    /* 구분선 */
     .divider {
-      width: 48px;
-      height: 2px;
-      background: #c8c4bb;
-      border-radius: 2px;
-      margin: 0 auto 2.5rem;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(120,180,255,0.35), rgba(200,160,255,0.3), rgba(120,180,255,0.35), transparent);
+      margin-bottom: 1.8rem;
+      animation: fadeIn 0.8s ease 0.2s both;
     }
 
+    /* 그리드 */
     .btn-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 14px;
+      gap: 12px;
       width: 100%;
-      max-width: 520px;
     }
 
     .link-btn {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 1.1rem 1rem;
-      background: #ffffff;
-      border: 1px solid #e0ddd6;
-      border-radius: 12px;
-      color: #1a1a1a;
-      font-size: 15px;
-      font-weight: 500;
+      gap: 8px;
+      padding: 1.2rem 0.5rem 1rem;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      color: #e8f0ff;
+      font-size: clamp(12px, 3vw, 14px);
+      font-weight: 600;
+      letter-spacing: 0.5px;
       text-decoration: none;
-      cursor: pointer;
-      transition: background 0.15s, border-color 0.15s, transform 0.1s;
-      font-family: inherit;
+      transition: background 0.18s, border-color 0.18s, transform 0.18s;
+      animation: fadeUp 0.55s ease both;
     }
-
     .link-btn:hover {
-      background: #eeecea;
-      border-color: #bbb8b0;
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.35);
+      transform: translateY(-4px);
     }
-
-    .link-btn:active {
-      transform: scale(0.97);
-    }
+    .link-btn:active { transform: scale(0.97); }
 
     .link-btn i {
-      font-size: 20px;
-      color: #888;
-      flex-shrink: 0;
+      font-size: 26px;
+      color: var(--ic, #7eb8ff);
     }
 
     .link-btn.full-width {
       grid-column: 1 / -1;
+      flex-direction: row;
+      gap: 12px;
+      padding: 1rem 1.5rem;
+      justify-content: center;
+    }
+    .link-btn.full-width i { font-size: 22px; }
+
+    /* 애니메이션 */
+    .link-btn:nth-child(1) { animation-delay: 0.28s; }
+    .link-btn:nth-child(2) { animation-delay: 0.34s; }
+    .link-btn:nth-child(3) { animation-delay: 0.40s; }
+    .link-btn:nth-child(4) { animation-delay: 0.46s; }
+    .link-btn:nth-child(5) { animation-delay: 0.52s; }
+    .link-btn:nth-child(6) { animation-delay: 0.58s; }
+    .link-btn:nth-child(7) { animation-delay: 0.64s; }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
     }
 
     /* 모바일: 항상 2열 유지 */
     @media (max-width: 480px) {
       body { padding: 2rem 1rem; }
-      .btn-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-      }
-      .link-btn {
-        font-size: 13px;
-        padding: 1rem 0.5rem;
-        gap: 6px;
-        border-radius: 10px;
-      }
-      .link-btn i { font-size: 18px; }
-      .link-btn.full-width { grid-column: 1 / -1; }
+      .logo-img { height: 58px; }
+      .btn-grid { gap: 9px; }
+      .link-btn { padding: 1rem 0.4rem 0.85rem; border-radius: 13px; }
+      .link-btn i { font-size: 22px; }
+      .link-btn.full-width { padding: 0.85rem 1rem; }
     }
   </style>
 </head>
 <body>
+  <div class="card">
 
-  <h1 class="church-title">시카고 언약 장로 교회</h1>
-  <p class="center-subtitle">온라인 정보 센터</p>
-  <div class="divider"></div>
+    <img class="logo-img"
+         src="https://chicagocovenant.org/wp-content/uploads/2024/12/cropped-ccpc-logo-color.png"
+         alt="시카고 언약 장로 교회 로고" />
 
-  <div class="btn-grid">
-    <a class="link-btn" href="https://chicagocovenant.org/" target="_blank" rel="noopener">
-      <i class="ti ti-world"></i>
-      교회 웹사이트
-    </a>
-    <a class="link-btn" href="https://www.youtube.com/@ccpc-media" target="_blank" rel="noopener">
-      <i class="ti ti-brand-youtube"></i>
-      교회 YouTube
-    </a>
+    <p class="church-name">시카고 언약 장로 교회</p>
+    <p class="church-name-en">Chicago Covenant Presbyterian Church</p>
+    <div class="badge">온라인 정보 센터</div>
+    <div class="divider"></div>
 
-    <a class="link-btn" href="https://glenwercpc-byte.github.io/Church-Calendar/" target="_blank" rel="noopener">
-      <i class="ti ti-calendar-event"></i>
-      교회 연중 일정표
-    </a>
-    <a class="link-btn" href="https://glenwercpc-byte.github.io/member-register/" target="_blank" rel="noopener">
-      <i class="ti ti-users"></i>
-      교인 명부
-    </a>
+    <div class="btn-grid">
+      <a class="link-btn" style="--ic:#7eb8ff" href="https://chicagocovenant.org/" target="_blank" rel="noopener">
+        <i class="ti ti-world"></i>교회 웹사이트
+      </a>
+      <a class="link-btn" style="--ic:#f87171" href="https://www.youtube.com/@ccpc-media" target="_blank" rel="noopener">
+        <i class="ti ti-brand-youtube"></i>교회 YouTube
+      </a>
+      <a class="link-btn" style="--ic:#6ee7b7" href="https://glenwercpc-byte.github.io/Church-Calendar/" target="_blank" rel="noopener">
+        <i class="ti ti-calendar-event"></i>교회 연중 일정표
+      </a>
+      <a class="link-btn" style="--ic:#fcd34d" href="https://glenwercpc-byte.github.io/member-register/" target="_blank" rel="noopener">
+        <i class="ti ti-users"></i>교인 명부
+      </a>
+      <a class="link-btn" style="--ic:#c4b5fd" href="https://glenwercpc-byte.github.io/Cell-Group/" target="_blank" rel="noopener">
+        <i class="ti ti-sitemap"></i>샘터 조직표
+      </a>
+      <a class="link-btn" style="--ic:#67e8f9" href="https://script.google.com/macros/s/AKfycbxF5ilSTQIL0sk8sOWEQGIn4t69YdcmUgMF8XKn4KXmc6RzuoLgju9z0O_nEshULuRJ6A/exec" target="_blank" rel="noopener">
+        <i class="ti ti-report"></i>부서장 보고서
+      </a>
+      <a class="link-btn full-width" style="--ic:#f9a8d4" href="https://glenwercpc-byte.github.io/Visit/" target="_blank" rel="noopener">
+        <i class="ti ti-notebook"></i>교인 심방 일지
+      </a>
+    </div>
 
-    <a class="link-btn" href="https://glenwercpc-byte.github.io/Cell-Group/" target="_blank" rel="noopener">
-      <i class="ti ti-sitemap"></i>
-      샘터 조직표
-    </a>
-    <a class="link-btn" href="https://script.google.com/macros/s/AKfycbxF5ilSTQIL0sk8sOWEQGIn4t69YdcmUgMF8XKn4KXmc6RzuoLgju9z0O_nEshULuRJ6A/exec" target="_blank" rel="noopener">
-      <i class="ti ti-report"></i>
-      부서장 보고서
-    </a>
-
-    <a class="link-btn full-width" href="https://glenwercpc-byte.github.io/Visit/" target="_blank" rel="noopener">
-      <i class="ti ti-notebook"></i>
-      교인 심방 일지
-    </a>
   </div>
-
 </body>
 </html>
