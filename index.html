@@ -148,6 +148,109 @@
       to   { opacity: 1; }
     }
 
+    /* YouTube 서브메뉴 오버레이 */
+    .yt-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 15, 45, 0.7);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .yt-overlay.open { display: flex; }
+
+    .yt-modal {
+      background: linear-gradient(160deg, #0f2557, #1a3a7c);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 22px;
+      padding: 1.6rem 1.25rem;
+      width: 100%;
+      max-width: 340px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      animation: popIn 0.22s ease both;
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .yt-modal-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 1px;
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.9rem;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+    .yt-modal-title i { font-size: 20px; color: #f87171; }
+
+    .yt-menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .yt-menu-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0.85rem 1rem;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 12px;
+      color: #e8f0ff;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      letter-spacing: 0.3px;
+      transition: background 0.15s, border-color 0.15s;
+      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+    }
+    .yt-menu-btn:hover {
+      background: rgba(255,255,255,0.16);
+      border-color: rgba(255,255,255,0.3);
+    }
+    .yt-menu-btn i {
+      font-size: 20px;
+      color: var(--mc, #f87171);
+      flex-shrink: 0;
+    }
+    .yt-menu-btn .badge-live {
+      margin-left: auto;
+      background: #ef4444;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 2px 7px;
+      border-radius: 20px;
+    }
+
+    .yt-close-btn {
+      width: 100%;
+      padding: 0.7rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      color: rgba(180,210,255,0.7);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+      letter-spacing: 0.5px;
+      transition: background 0.15s;
+    }
+    .yt-close-btn:hover { background: rgba(255,255,255,0.12); }
+
     /* 모바일: 항상 2열 유지 */
     @media (max-width: 480px) {
       body { padding: 2rem 1rem; }
@@ -171,9 +274,9 @@
       <a class="link-btn" style="--ic:#7eb8ff" href="https://chicagocovenant.org/" target="_blank" rel="noopener">
         <i class="ti ti-world"></i>교회 웹사이트
       </a>
-      <a class="link-btn" style="--ic:#f87171" href="https://www.youtube.com/@ccpc-media" target="_blank" rel="noopener">
+      <button class="link-btn" style="--ic:#f87171" onclick="document.getElementById('ytOverlay').classList.add('open')">
         <i class="ti ti-brand-youtube"></i>교회 YouTube
-      </a>
+      </button>
       <a class="link-btn" style="--ic:#6ee7b7" href="https://glenwercpc-byte.github.io/Church-Calendar/" target="_blank" rel="noopener">
         <i class="ti ti-calendar-event"></i>교회 연중 일정표
       </a>
@@ -191,6 +294,34 @@
       </a>
     </div>
 
+  </div>
+
+  <!-- YouTube 서브메뉴 오버레이 -->
+  <div class="yt-overlay" id="ytOverlay" onclick="if(event.target===this)this.classList.remove('open')">
+    <div class="yt-modal">
+      <div class="yt-modal-title">
+        <i class="ti ti-brand-youtube"></i>교회 YouTube
+      </div>
+      <div class="yt-menu-list">
+        <a class="yt-menu-btn" style="--mc:#ef4444" href="https://www.youtube.com/@ccpc-media/streams" target="_blank" rel="noopener">
+          <i class="ti ti-live-photo"></i>라이브
+          <span class="badge-live">LIVE</span>
+        </a>
+        <a class="yt-menu-btn" style="--mc:#fbbf24" href="https://www.youtube.com/@ccpc-media/search?query=주일예배" target="_blank" rel="noopener">
+          <i class="ti ti-building-church"></i>주일예배
+        </a>
+        <a class="yt-menu-btn" style="--mc:#34d399" href="https://www.youtube.com/@ccpc-media/search?query=금요기도회" target="_blank" rel="noopener">
+          <i class="ti ti-moon"></i>금요기도회
+        </a>
+        <a class="yt-menu-btn" style="--mc:#60a5fa" href="https://www.youtube.com/@ccpc-media/search?query=새벽기도회" target="_blank" rel="noopener">
+          <i class="ti ti-sunrise"></i>새벽기도회
+        </a>
+        <a class="yt-menu-btn" style="--mc:#c084fc" href="https://www.youtube.com/@ccpc-media/shorts" target="_blank" rel="noopener">
+          <i class="ti ti-device-mobile"></i>Shorts
+        </a>
+      </div>
+      <button class="yt-close-btn" onclick="document.getElementById('ytOverlay').classList.remove('open')">✕ 닫기</button>
+    </div>
   </div>
 </body>
 </html>
