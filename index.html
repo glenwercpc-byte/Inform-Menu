@@ -4,9 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>시카고 언약 장로 교회 – 온라인 정보 센터</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -17,248 +14,138 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
-      background: #f0f4ff;
-      padding: 3rem 1.5rem;
-      position: relative;
-      overflow-x: hidden;
+      background: #f5f4f0;
+      font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
+      padding: 2.5rem 1.5rem;
     }
 
-    /* bright animated background */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 70% 55% at 15% 10%, rgba(180,210,255,0.6) 0%, transparent 55%),
-        radial-gradient(ellipse 60% 50% at 85% 85%, rgba(210,185,255,0.5) 0%, transparent 55%),
-        radial-gradient(ellipse 55% 45% at 50% 50%, rgba(255,240,200,0.4) 0%, transparent 60%);
-      z-index: 0;
-      animation: bgPulse 10s ease-in-out infinite alternate;
+    .church-title {
+      font-size: clamp(22px, 5vw, 32px);
+      font-weight: 600;
+      color: #1a1a1a;
+      text-align: center;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
     }
 
-    @keyframes bgPulse {
-      0%   { opacity: 0.8; }
-      100% { opacity: 1; }
+    .center-subtitle {
+      font-size: 16px;
+      color: #666;
+      text-align: center;
+      font-weight: 400;
+      margin-bottom: 2rem;
     }
 
-    .page-wrap {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 600px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* logo */
-    .logo-wrap {
-      margin-bottom: 1.6rem;
-      animation: fadeDown 0.6s ease both;
-    }
-    .logo-wrap img {
-      height: 80px;
-      width: auto;
-      filter: drop-shadow(0 4px 16px rgba(80,120,220,0.18));
-    }
-
-    /* subtitle banner */
-    .subtitle-band {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: linear-gradient(135deg, #1a56db 0%, #6c3fc5 100%);
-      color: #fff;
-      font-size: clamp(18px, 4vw, 24px);
-      font-weight: 700;
-      letter-spacing: 5px;
-      padding: 0.55rem 2.2rem;
-      border-radius: 50px;
-      margin-bottom: 2.4rem;
-      box-shadow: 0 6px 24px rgba(80,60,200,0.22);
-      animation: fadeDown 0.7s ease 0.1s both;
-    }
-    .subtitle-band i {
-      font-size: 20px;
-      opacity: 0.85;
-    }
-
-    /* divider */
     .divider {
-      width: 100%;
-      height: 1.5px;
-      background: linear-gradient(90deg, transparent, rgba(100,80,220,0.25), rgba(200,160,255,0.35), rgba(100,80,220,0.25), transparent);
-      margin-bottom: 2.2rem;
-      animation: fadeIn 0.9s ease 0.2s both;
+      width: 48px;
+      height: 2px;
+      background: #c8c4bb;
+      border-radius: 2px;
+      margin: 0 auto 2.5rem;
     }
 
-    /* grid */
     .btn-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
+      gap: 14px;
       width: 100%;
+      max-width: 520px;
     }
 
     .link-btn {
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      padding: 1.5rem 1rem 1.3rem;
+      padding: 1.1rem 1rem;
       background: #ffffff;
-      border: 1.5px solid rgba(130,100,230,0.15);
-      border-radius: 18px;
-      color: #1e1b4b;
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
+      border: 1px solid #e0ddd6;
+      border-radius: 12px;
+      color: #1a1a1a;
+      font-size: 15px;
+      font-weight: 500;
       text-decoration: none;
       cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
-      box-shadow: 0 2px 12px rgba(100,80,200,0.08);
-      animation: fadeUp 0.55s ease both;
-    }
-
-    /* top color stripe per button */
-    .link-btn::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 4px;
-      border-radius: 18px 18px 0 0;
-      background: var(--stripe, linear-gradient(90deg, #4f8ef7, #a78bfa));
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+      font-family: inherit;
     }
 
     .link-btn:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 32px rgba(100,80,200,0.18);
-      border-color: rgba(130,100,230,0.35);
+      background: #eeecea;
+      border-color: #bbb8b0;
     }
-    .link-btn:active { transform: translateY(-2px) scale(0.98); }
 
-    .icon-wrap {
-      width: 52px;
-      height: 52px;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--icon-bg, #eff2ff);
+    .link-btn:active {
+      transform: scale(0.97);
     }
-    .icon-wrap i {
-      font-size: 26px;
-      color: var(--icon-color, #4f8ef7);
+
+    .link-btn i {
+      font-size: 20px;
+      color: #888;
+      flex-shrink: 0;
     }
 
     .link-btn.full-width {
       grid-column: 1 / -1;
-      flex-direction: row;
-      gap: 16px;
-      padding: 1.3rem 2rem;
-    }
-    .link-btn.full-width .icon-wrap {
-      width: 48px; height: 48px;
-      flex-shrink: 0;
-    }
-    .link-btn.full-width .btn-label {
-      font-size: 16px;
     }
 
-    /* per-button colors */
-    .btn-web    { --stripe: linear-gradient(90deg,#3b82f6,#60a5fa); --icon-bg:#eff6ff; --icon-color:#2563eb; }
-    .btn-yt     { --stripe: linear-gradient(90deg,#ef4444,#f87171); --icon-bg:#fef2f2; --icon-color:#dc2626; }
-    .btn-cal    { --stripe: linear-gradient(90deg,#10b981,#34d399); --icon-bg:#ecfdf5; --icon-color:#059669; }
-    .btn-member { --stripe: linear-gradient(90deg,#f59e0b,#fbbf24); --icon-bg:#fffbeb; --icon-color:#d97706; }
-    .btn-cell   { --stripe: linear-gradient(90deg,#8b5cf6,#a78bfa); --icon-bg:#f5f3ff; --icon-color:#7c3aed; }
-    .btn-report { --stripe: linear-gradient(90deg,#0ea5e9,#38bdf8); --icon-bg:#f0f9ff; --icon-color:#0284c7; }
-    .btn-visit  { --stripe: linear-gradient(90deg,#ec4899,#f472b6); --icon-bg:#fdf2f8; --icon-color:#db2777; }
-
-    /* stagger */
-    .link-btn:nth-child(1) { animation-delay: 0.30s; }
-    .link-btn:nth-child(2) { animation-delay: 0.37s; }
-    .link-btn:nth-child(3) { animation-delay: 0.44s; }
-    .link-btn:nth-child(4) { animation-delay: 0.51s; }
-    .link-btn:nth-child(5) { animation-delay: 0.58s; }
-    .link-btn:nth-child(6) { animation-delay: 0.65s; }
-    .link-btn:nth-child(7) { animation-delay: 0.72s; }
-
-    @keyframes fadeDown {
-      from { opacity: 0; transform: translateY(-18px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(22px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
-
+    /* 모바일: 항상 2열 유지 */
     @media (max-width: 480px) {
-      .btn-grid { grid-template-columns: 1fr; }
-      .link-btn.full-width { grid-column: 1; }
+      body { padding: 2rem 1rem; }
+      .btn-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .link-btn {
+        font-size: 13px;
+        padding: 1rem 0.5rem;
+        gap: 6px;
+        border-radius: 10px;
+      }
+      .link-btn i { font-size: 18px; }
+      .link-btn.full-width { grid-column: 1 / -1; }
     }
   </style>
 </head>
 <body>
-  <div class="page-wrap">
 
-    <div class="logo-wrap">
-      <img src="https://chicagocovenant.org/wp-content/uploads/2024/12/cropped-ccpc-logo-color.png"
-           alt="시카고 언약 장로 교회" />
-    </div>
+  <h1 class="church-title">시카고 언약 장로 교회</h1>
+  <p class="center-subtitle">온라인 정보 센터</p>
+  <div class="divider"></div>
 
-    <div class="subtitle-band">
-      <i class="ti ti-layout-grid"></i>
-      온라인 정보 센터
-    </div>
+  <div class="btn-grid">
+    <a class="link-btn" href="https://chicagocovenant.org/" target="_blank" rel="noopener">
+      <i class="ti ti-world"></i>
+      교회 웹사이트
+    </a>
+    <a class="link-btn" href="https://www.youtube.com/@ccpc-media" target="_blank" rel="noopener">
+      <i class="ti ti-brand-youtube"></i>
+      교회 YouTube
+    </a>
 
-    <div class="divider"></div>
+    <a class="link-btn" href="https://glenwercpc-byte.github.io/Church-Calendar/" target="_blank" rel="noopener">
+      <i class="ti ti-calendar-event"></i>
+      교회 연중 일정표
+    </a>
+    <a class="link-btn" href="https://glenwercpc-byte.github.io/member-register/" target="_blank" rel="noopener">
+      <i class="ti ti-users"></i>
+      교인 명부
+    </a>
 
-    <div class="btn-grid">
+    <a class="link-btn" href="https://glenwercpc-byte.github.io/Cell-Group/" target="_blank" rel="noopener">
+      <i class="ti ti-sitemap"></i>
+      샘터 조직표
+    </a>
+    <a class="link-btn" href="https://script.google.com/macros/s/AKfycbxF5ilSTQIL0sk8sOWEQGIn4t69YdcmUgMF8XKn4KXmc6RzuoLgju9z0O_nEshULuRJ6A/exec" target="_blank" rel="noopener">
+      <i class="ti ti-report"></i>
+      부서장 보고서
+    </a>
 
-      <a class="link-btn btn-web" href="https://chicagocovenant.org/" target="_blank" rel="noopener">
-        <div class="icon-wrap"><i class="ti ti-world"></i></div>
-        <span class="btn-label">교회 웹사이트</span>
-      </a>
-
-      <a class="link-btn btn-yt" href="https://www.youtube.com/@ccpc-media" target="_blank" rel="noopener">
-        <div class="icon-wrap"><i class="ti ti-brand-youtube"></i></div>
-        <span class="btn-label">교회 YouTube</span>
-      </a>
-
-      <a class="link-btn btn-cal" href="https://glenwercpc-byte.github.io/Church-Calendar/" target="_blank" rel="noopener">
-        <div class="icon-wrap"><i class="ti ti-calendar-event"></i></div>
-        <span class="btn-label">교회 연중 일정표</span>
-      </a>
-
-      <a class="link-btn btn-member" href="https://glenwercpc-byte.github.io/member-register/" target="_blank" rel="noopener">
-        <div class="icon-wrap"><i class="ti ti-users"></i></div>
-        <span class="btn-label">교인 명부</span>
-      </a>
-
-      <a class="link-btn btn-cell" href="https://glenwercpc-byte.github.io/Cell-Group/" target="_blank" rel="noopener">
-        <div class="icon-wrap"><i class="ti ti-sitemap"></i></div>
-        <span class="btn-label">샘터 조직표</span>
-      </a>
-
-      <a class="link-btn btn-report" href="https://script.google.com/macros/s/AKfycbxF5ilSTQIL0sk8sOWEQGIn4t69YdcmUgMF8XKn4KXmc6RzuoLgju9z0O_nEshULuRJ6A/exec" target="_blank" rel="noopener">
-        <div class="icon-wrap"><i class="ti ti-report"></i></div>
-        <span class="btn-label">부서장 보고서</span>
-      </a>
-
-      <a class="link-btn btn-visit full-width" href="https://glenwercpc-byte.github.io/Visit/" target="_blank" rel="noopener">
-        <div class="icon-wrap"><i class="ti ti-notebook"></i></div>
-        <span class="btn-label">교인 심방 일지</span>
-      </a>
-
-    </div>
+    <a class="link-btn full-width" href="https://glenwercpc-byte.github.io/Visit/" target="_blank" rel="noopener">
+      <i class="ti ti-notebook"></i>
+      교인 심방 일지
+    </a>
   </div>
+
 </body>
 </html>
