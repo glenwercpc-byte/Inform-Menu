@@ -267,6 +267,125 @@
     }
     .yt-close-btn:hover { background: rgba(255,255,255,0.12); }
 
+    /* Admin 버튼 */
+    .admin-wrap {
+      margin-bottom: 1.4rem;
+      animation: fadeDown 0.65s ease 0.18s both;
+    }
+    .admin-btn {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 20px;
+      color: rgba(180,210,255,0.6);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      padding: 4px 16px;
+      cursor: pointer;
+      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+      transition: background 0.15s, color 0.15s;
+    }
+    .admin-btn:hover { background: rgba(255,255,255,0.13); color: rgba(200,230,255,0.9); }
+    .admin-btn.active { background: rgba(100,200,100,0.15); border-color: rgba(100,220,100,0.4); color: rgba(150,255,150,0.85); }
+
+    /* 숨김 버튼 */
+    .admin-only { display: none; }
+    .admin-only.visible { display: flex; }
+
+    /* 암호 모달 */
+    .pw-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(5,15,45,0.75);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .pw-overlay.open { display: flex; }
+    .pw-modal {
+      background: linear-gradient(160deg, #0f2557, #1a3a7c);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 22px;
+      padding: 2rem 1.5rem;
+      width: 100%;
+      max-width: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      animation: popIn 0.22s ease both;
+    }
+    .pw-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pw-title i { color: #fcd34d; font-size: 18px; }
+    .pw-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 6px;
+      text-align: center;
+      font-family: monospace;
+      outline: none;
+    }
+    .pw-input:focus { border-color: rgba(120,180,255,0.6); }
+    .pw-input.error { border-color: rgba(255,100,100,0.7); animation: shake 0.3s ease; }
+    .pw-error-msg {
+      font-size: 12px;
+      color: #f87171;
+      display: none;
+    }
+    .pw-error-msg.show { display: block; }
+    .pw-row { display: flex; gap: 8px; width: 100%; }
+    .pw-confirm-btn {
+      flex: 1;
+      padding: 0.7rem;
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+      transition: opacity 0.15s;
+    }
+    .pw-confirm-btn:hover { opacity: 0.85; }
+    .pw-cancel-btn {
+      padding: 0.7rem 1rem;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px;
+      color: rgba(180,210,255,0.7);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+      transition: background 0.15s;
+    }
+    .pw-cancel-btn:hover { background: rgba(255,255,255,0.12); }
+    @keyframes shake {
+      0%,100%{ transform:translateX(0); }
+      25%{ transform:translateX(-6px); }
+      75%{ transform:translateX(6px); }
+    }
+
     /* 모바일: 항상 2열 유지 */
     @media (max-width: 480px) {
       body { padding: 2rem 1rem; }
@@ -284,6 +403,11 @@
     <p class="church-name">시카고 언약 장로 교회</p>
     <p class="church-name-en">Chicago Covenant Presbyterian Church</p>
     <div class="badge">온라인 정보 센터</div>
+    <div class="admin-wrap">
+      <button class="admin-btn" id="adminBtn" onclick="openAdminOrLogout()">
+        <i class="ti ti-lock" style="font-size:10px;vertical-align:middle;margin-right:3px;"></i>admin
+      </button>
+    </div>
     <div class="divider"></div>
 
     <div class="btn-grid">
@@ -317,12 +441,12 @@
         <span>샘터 조직표</span>
         <span class="btn-en">Cell Group</span>
       </a>
-      <a class="link-btn" style="--ic:#67e8f9" href="https://glenwercpc-byte.github.io/Dept-Report/" target="_blank" rel="noopener">
+      <a class="link-btn admin-only" style="--ic:#67e8f9" href="https://glenwercpc-byte.github.io/Dept-Report/" target="_blank" rel="noopener">
         <i class="ti ti-report"></i>
         <span>부서장 보고서</span>
         <span class="btn-en">Dept. Report</span>
       </a>
-      <a class="link-btn" style="--ic:#f9a8d4" href="https://glenwercpc-byte.github.io/Visit/" target="_blank" rel="noopener">
+      <a class="link-btn admin-only" style="--ic:#f9a8d4" href="https://glenwercpc-byte.github.io/Visit/" target="_blank" rel="noopener">
         <i class="ti ti-notebook"></i>
         <span>교인 심방 일지</span>
         <span class="btn-en">Pastoral Visitation</span>
@@ -330,6 +454,69 @@
     </div>
 
   </div>
+
+  <!-- 암호 입력 모달 -->
+  <div class="pw-overlay" id="pwOverlay">
+    <div class="pw-modal">
+      <div class="pw-title"><i class="ti ti-lock"></i>관리자 로그인</div>
+      <input class="pw-input" id="pwInput" type="password" maxlength="6" placeholder="••••"
+             oninput="this.classList.remove('error'); document.getElementById('pwError').classList.remove('show')"
+             onkeydown="if(event.key==='Enter')checkPassword()" />
+      <div class="pw-error-msg" id="pwError">암호가 틀렸습니다</div>
+      <div class="pw-row">
+        <button class="pw-confirm-btn" onclick="checkPassword()">확인</button>
+        <button class="pw-cancel-btn" onclick="closePwModal()">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ADMIN_PW = '1424';
+    let isAdmin = false;
+
+    function openAdminOrLogout() {
+      if (isAdmin) {
+        // 로그아웃
+        isAdmin = false;
+        document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('visible'));
+        const btn = document.getElementById('adminBtn');
+        btn.classList.remove('active');
+        btn.innerHTML = '<i class="ti ti-lock" style="font-size:10px;vertical-align:middle;margin-right:3px;"></i>admin';
+      } else {
+        openPwModal();
+      }
+    }
+
+    function openPwModal() {
+      document.getElementById('pwInput').value = '';
+      document.getElementById('pwInput').classList.remove('error');
+      document.getElementById('pwError').classList.remove('show');
+      document.getElementById('pwOverlay').classList.add('open');
+      setTimeout(() => document.getElementById('pwInput').focus(), 100);
+    }
+
+    function closePwModal() {
+      document.getElementById('pwOverlay').classList.remove('open');
+    }
+
+    function checkPassword() {
+      const val = document.getElementById('pwInput').value;
+      if (val === ADMIN_PW) {
+        isAdmin = true;
+        document.querySelectorAll('.admin-only').forEach(el => el.classList.add('visible'));
+        const btn = document.getElementById('adminBtn');
+        btn.classList.add('active');
+        btn.innerHTML = '<i class="ti ti-lock-open" style="font-size:10px;vertical-align:middle;margin-right:3px;"></i>admin ✓';
+        closePwModal();
+      } else {
+        const input = document.getElementById('pwInput');
+        input.classList.add('error');
+        document.getElementById('pwError').classList.add('show');
+        input.value = '';
+        setTimeout(() => input.focus(), 100);
+      }
+    }
+  </script>
 
   <!-- YouTube 서브메뉴 오버레이 -->
   <div class="yt-overlay" id="ytOverlay" onclick="if(event.target===this)this.classList.remove('open')">
