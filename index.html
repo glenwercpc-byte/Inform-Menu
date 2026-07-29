@@ -431,11 +431,11 @@
         <span>교회 연중 일정표</span>
         <span class="btn-en">Church Annual Schedule</span>
       </a>
-      <a class="link-btn" style="--ic:#fcd34d" href="https://glenwercpc-byte.github.io/member-register/" target="_blank" rel="noopener">
+      <button class="link-btn" style="--ic:#fcd34d" onclick="openLinkPw('member')">
         <i class="ti ti-users"></i>
         <span>교인 명부</span>
         <span class="btn-en">Member Directory</span>
-      </a>
+      </button>
       <a class="link-btn" style="--ic:#c4b5fd" href="https://glenwercpc-byte.github.io/Cell-Group/" target="_blank" rel="noopener">
         <i class="ti ti-sitemap"></i>
         <span>샘터 조직표</span>
@@ -446,11 +446,11 @@
         <span>부서장 보고서</span>
         <span class="btn-en">Dept. Report</span>
       </a>
-      <a class="link-btn admin-only" style="--ic:#f9a8d4" href="https://glenwercpc-byte.github.io/Visit/" target="_blank" rel="noopener">
+      <button class="link-btn admin-only" style="--ic:#f9a8d4" onclick="openLinkPw('visit')">
         <i class="ti ti-notebook"></i>
         <span>교인 심방 일지</span>
         <span class="btn-en">Pastoral Visitation</span>
-      </a>
+      </button>
     </div>
 
   </div>
@@ -471,6 +471,54 @@
   </div>
 
   <script>
+    const LINK_PW_CONFIG = {
+      member: {
+        pw: '1472',
+        url: 'https://glenwercpc-byte.github.io/member-register/',
+        title: '교인 명부',
+        desc: '암호를 입력해 주세요\n(사무실을 통해 확인)'
+      },
+      visit: {
+        pw: '1335',
+        url: 'https://glenwercpc-byte.github.io/Visit/',
+        title: '교인 심방 일지',
+        desc: '담임 목사 전용'
+      }
+    };
+    let currentLinkTarget = null;
+
+    function openLinkPw(target) {
+      currentLinkTarget = target;
+      const cfg = LINK_PW_CONFIG[target];
+      document.getElementById('linkPwTitle').innerHTML = '<i class="ti ti-lock"></i>' + cfg.title;
+      document.getElementById('linkPwDesc').innerText = cfg.desc;
+      document.getElementById('linkPwInput').value = '';
+      document.getElementById('linkPwInput').classList.remove('error');
+      document.getElementById('linkPwError').classList.remove('show');
+      document.getElementById('linkPwOverlay').classList.add('open');
+      setTimeout(() => document.getElementById('linkPwInput').focus(), 100);
+    }
+
+    function closeLinkPwModal() {
+      document.getElementById('linkPwOverlay').classList.remove('open');
+      currentLinkTarget = null;
+    }
+
+    function checkLinkPassword() {
+      const val = document.getElementById('linkPwInput').value;
+      const cfg = LINK_PW_CONFIG[currentLinkTarget];
+      if (val === cfg.pw) {
+        closeLinkPwModal();
+        window.open(cfg.url, '_blank', 'noopener');
+      } else {
+        const input = document.getElementById('linkPwInput');
+        input.classList.add('error');
+        document.getElementById('linkPwError').classList.add('show');
+        input.value = '';
+        setTimeout(() => input.focus(), 100);
+      }
+    }
+
     const ADMIN_PW = '1424';
     let isAdmin = false;
 
@@ -517,6 +565,22 @@
       }
     }
   </script>
+
+  <!-- 링크 전용 암호 모달 -->
+  <div class="pw-overlay" id="linkPwOverlay">
+    <div class="pw-modal">
+      <div class="pw-title" id="linkPwTitle"><i class="ti ti-lock"></i>암호를 입력해 주세요</div>
+      <div id="linkPwDesc" style="font-size:12px;color:rgba(180,210,255,0.65);text-align:center;line-height:1.6;"></div>
+      <input class="pw-input" id="linkPwInput" type="password" maxlength="6" placeholder="••••"
+             oninput="this.classList.remove('error'); document.getElementById('linkPwError').classList.remove('show')"
+             onkeydown="if(event.key==='Enter')checkLinkPassword()" />
+      <div class="pw-error-msg" id="linkPwError">암호가 틀렸습니다</div>
+      <div class="pw-row">
+        <button class="pw-confirm-btn" onclick="checkLinkPassword()">확인</button>
+        <button class="pw-cancel-btn" onclick="closeLinkPwModal()">취소</button>
+      </div>
+    </div>
+  </div>
 
   <!-- YouTube 서브메뉴 오버레이 -->
   <div class="yt-overlay" id="ytOverlay" onclick="if(event.target===this)this.classList.remove('open')">
