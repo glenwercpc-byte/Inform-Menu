@@ -31,7 +31,7 @@
 
     .card {
       width: 100%;
-      max-width: 480px;
+      max-width: 960px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -91,7 +91,7 @@
     /* 그리드 */
     .btn-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(4, 1fr);
       gap: 12px;
       width: 100%;
     }
@@ -150,9 +150,6 @@
     .link-btn:nth-child(5) { animation-delay: 0.52s; }
     .link-btn:nth-child(6) { animation-delay: 0.58s; }
     .link-btn:nth-child(7) { animation-delay: 0.64s; }
-    .link-btn:nth-child(8) { animation-delay: 0.70s; }
-    .link-btn:nth-child(9) { animation-delay: 0.76s; }
-    .link-btn:nth-child(10) { animation-delay: 0.82s; }
 
     @keyframes fadeDown {
       from { opacity: 0; transform: translateY(-14px); }
@@ -389,14 +386,17 @@
       75%{ transform:translateX(6px); }
     }
 
-    /* 모바일: 항상 2열 유지 */
+    /* 태블릿: 2열 */
+    @media (max-width: 768px) {
+      .btn-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    /* 모바일: 2열 유지 */
     @media (max-width: 480px) {
       body { padding: 2rem 1rem; }
       .logo-img { height: 58px; }
-      .btn-grid { gap: 9px; }
+      .btn-grid { gap: 9px; grid-template-columns: repeat(2, 1fr); }
       .link-btn { padding: 1rem 0.4rem 0.85rem; border-radius: 13px; }
       .link-btn i { font-size: 22px; }
-      .link-btn.full-width { padding: 0.85rem 1rem; }
     }
   </style>
 </head>
@@ -406,7 +406,7 @@
     <p class="church-name">시카고 언약 장로 교회</p>
     <p class="church-name-en">Chicago Covenant Presbyterian Church</p>
     <div class="badge">온라인 정보 센터</div>
-    <div class="admin-wrap">
+    <div class="admin-wrap" style="display:none">
       <button class="admin-btn" id="adminBtn" onclick="openAdminOrLogout()">
         <i class="ti ti-lock" style="font-size:10px;vertical-align:middle;margin-right:3px;"></i>admin
       </button>
@@ -424,16 +424,6 @@
         <span>교회 YouTube</span>
         <span class="btn-en">Church YouTube</span>
       </button>
-      <a class="link-btn" style="--ic:#fbbf24" href="https://bible.no1sms.kr/bible" target="_blank" rel="noopener">
-        <i class="ti ti-book-2"></i>
-        <span>성경</span>
-        <span class="btn-en">Bible</span>
-      </a>
-      <a class="link-btn" style="--ic:#34d399" href="https://bible.no1sms.kr/hymn?v=2" target="_blank" rel="noopener">
-        <i class="ti ti-music"></i>
-        <span>찬송</span>
-        <span class="btn-en">Hymns</span>
-      </a>
       <a class="link-btn" style="--ic:#fb7185" href="https://www.bethelpress.org/" target="_blank" rel="noopener">
         <i class="ti ti-sunrise"></i>
         <span>새벽 기도회 · 오늘의 양식</span>
@@ -454,16 +444,26 @@
         <span>샘터 조직표</span>
         <span class="btn-en">Cell Group</span>
       </a>
-      <a class="link-btn admin-only" style="--ic:#67e8f9" href="https://glenwercpc-byte.github.io/Dept-Report/" target="_blank" rel="noopener">
+      <a class="link-btn" style="--ic:#67e8f9" href="https://glenwercpc-byte.github.io/Dept-Report/" target="_blank" rel="noopener">
         <i class="ti ti-report"></i>
         <span>부서장 보고서</span>
         <span class="btn-en">Dept. Report</span>
       </a>
-      <button class="link-btn admin-only" style="--ic:#f9a8d4" onclick="openLinkPw('visit')">
+      <button class="link-btn" style="--ic:#f9a8d4" onclick="openLinkPw('visit')">
         <i class="ti ti-notebook"></i>
         <span>교인 심방 일지</span>
         <span class="btn-en">Pastoral Visitation</span>
       </button>
+      <a class="link-btn" style="--ic:#4ade80" href="https://glenwercpc-byte.github.io/Weekly-Status/" target="_blank" rel="noopener">
+        <i class="ti ti-chart-bar"></i>
+        <span>주일 출석 현황</span>
+        <span class="btn-en">Weekly Attendance</span>
+      </a>
+      <a class="link-btn" style="--ic:#a3e635" href="https://glenwercpc-byte.github.io/Cemetery/" target="_blank" rel="noopener">
+        <i class="ti ti-home-heart"></i>
+        <span>교회 묘지 관리</span>
+        <span class="btn-en">Cemetery Management</span>
+      </a>
     </div>
 
   </div>
