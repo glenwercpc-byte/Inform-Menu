@@ -680,6 +680,9 @@
   </div>
 
   <script>
+    /* ── 상수 ── */
+    const ORG_URL = 'https://glenwercpc-byte.github.io/Org-Chart/';
+
     const LINK_PW_CONFIG = {
       member: {
         pw: '1472',
@@ -692,10 +695,18 @@
         url: 'https://glenwercpc-byte.github.io/Visit/',
         title: '교인 심방 일지',
         desc: '담임 목사 전용'
+      },
+      orgAdmin: {
+        pw: '4241',
+        url: null,
+        title: '관리모드',
+        desc: '조직표 관리자 암호를 입력해 주세요'
       }
     };
+
     let currentLinkTarget = null;
 
+    /* ── 링크 암호 모달 ── */
     function openLinkPw(target) {
       currentLinkTarget = target;
       const cfg = LINK_PW_CONFIG[target];
@@ -717,8 +728,9 @@
       const val = document.getElementById('linkPwInput').value;
       const cfg = LINK_PW_CONFIG[currentLinkTarget];
       if (val === cfg.pw) {
+        const target = currentLinkTarget;
         closeLinkPwModal();
-        if (currentLinkTarget === 'orgAdmin') {
+        if (target === 'orgAdmin') {
           openAdminIframe();
         } else {
           window.open(cfg.url, '_blank', 'noopener');
@@ -732,12 +744,12 @@
       }
     }
 
+    /* ── 히든 admin 버튼 (display:none) ── */
     const ADMIN_PW = '1424';
     let isAdmin = false;
 
     function openAdminOrLogout() {
       if (isAdmin) {
-        // 로그아웃
         isAdmin = false;
         document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('visible'));
         const btn = document.getElementById('adminBtn');
@@ -777,124 +789,84 @@
         setTimeout(() => input.focus(), 100);
       }
     }
-  </script>
 
-  <!-- 조직표 스크립트 -->
-  <script>
-    const ORG_URL = 'https://glenwercpc-byte.github.io/Org-Chart/';
-    const ORG_ADMIN_PW = '4241';
-
+    /* ── 조직표 모달 ── */
     function closeOrgModal() {
       document.getElementById('orgOverlay').classList.remove('open');
     }
 
-    /* 조회모드: iframe으로 열고 불필요한 요소 숨김 */
-    function openViewMode() {
+    function openOrgAdminPw() {
       closeOrgModal();
-      document.getElementById('iframeTopbarTitle').innerHTML =
-        '<i class="ti ti-eye"></i> 부서조직표 · 2026년 (조회모드)';
+      openLinkPw('orgAdmin');
+    }
+
+    /* ── iframe 공통 유틸 ── */
+    function openOrgIframe(isViewMode) {
       const frame = document.getElementById('orgFrame');
+      const titleEl = document.getElementById('iframeTopbarTitle');
+
+      if (isViewMode) {
+        titleEl.innerHTML = '<i class="ti ti-eye"></i>&nbsp;부서조직표 · 2026년 (조회모드)';
+      } else {
+        titleEl.innerHTML = '<i class="ti ti-sitemap"></i>&nbsp;부서조직표 · 2026년';
+      }
+
       frame.src = ORG_URL;
       document.getElementById('iframeOverlay').classList.add('open');
 
-      frame.onload = function() {
+      frame.onload = function () {
         try {
           const doc = frame.contentDocument || frame.contentWindow.document;
 
-          // CSS 주입: 숨길 요소들
-          const style = doc.createElement('style');
-          style.id = 'ccpc-view-mode';
-          style.textContent = `
-            /* 탭 전체 숨김 */
-            nav.tabs { display: none !important; }
+          if (isViewMode) {
+            /* 조회모드: 불필요 요소 숨김 */
+            const style = doc.createElement('style');
+            style.textContent = `
+              nav.tabs                          { display: none !important; }
+              #yearSel, #newYearBtn, #saveBtn,
+              #status                           { display: none !important; }
+              #view-gigu, #view-buseo,
+              #view-org                         { display: none !important; }
+              .preview-tools .btn               { display: none !important; }
+              #orgPrintBtn                      { display: none !important; }
+              #view-preview                     { display: block !important; }
+              #view-preview[hidden]             { display: block !important; }
+            `;
+            doc.head.appendChild(style);
+          }
 
-            /* 헤더 컨트롤 숨김: 연도선택, 새연도, 저장 */
-            #yearSel, #newYearBtn, #saveBtn, #status { display: none !important; }
-
-            /* 입력 뷰 숨김 */
-            #view-gigu, #view-buseo, #view-org { display: none !important; }
-
-            /* 미리보기 인쇄 버튼 숨김 */
-            .preview-tools button[onclick*="print"],
-            button[onclick*="window.print"] { display: none !important; }
-
-            /* 미리보기 인쇄 버튼 (inline onclick) */
-            .preview-tools .btn { display: none !important; }
-
-            /* 조직도 탭 인쇄 버튼 */
-            #orgPrintBtn { display: none !important; }
-
-            /* 미리보기 섹션 강제 표시 */
-            #view-preview { display: block !important; }
-            #view-preview[hidden] { display: block !important; }
-          `;
-          doc.head.appendChild(style);
-
-          // 미리보기 탭 클릭 (섹션 활성화)
-          const tabs = doc.querySelectorAll('button.tab[data-view]');
-          tabs.forEach(t => {
-            if (t.getAttribute('data-view') === 'preview') {
-              t.click();
-            }
+          /* 미리보기 탭 클릭 */
+          doc.querySelectorAll('button.tab[data-view]').forEach(t => {
+            if (t.getAttribute('data-view') === 'preview') t.click();
           });
 
-          // 부서조직표 선택 (data-pv="table")
+          /* 부서조직표 선택 */
           setTimeout(() => {
-            const pvBtns = doc.querySelectorAll('[data-pv]');
-            pvBtns.forEach(b => {
+            doc.querySelectorAll('[data-pv]').forEach(b => {
               if (b.getAttribute('data-pv') === 'table') b.click();
             });
-          }, 300);
+          }, 400);
 
-        } catch(e) {
-          // cross-origin 제한 시 동작 불가 — URL 파라미터 대응 필요
-          console.warn('조회모드 DOM 접근 실패 (cross-origin):', e);
+        } catch (e) {
+          console.warn('Org-Chart iframe DOM 접근 실패:', e);
         }
       };
+    }
+
+    /* 조회모드 진입 */
+    function openViewMode() {
+      closeOrgModal();
+      openOrgIframe(true);
+    }
+
+    /* 관리모드 진입 (암호 확인 후) */
+    function openAdminIframe() {
+      openOrgIframe(false);
     }
 
     function closeIframeOverlay() {
       document.getElementById('iframeOverlay').classList.remove('open');
       document.getElementById('orgFrame').src = '';
-    }
-
-    /* 관리모드: 암호 입력 후 iframe으로 열되 미리보기 탭으로 이동 */
-    function openOrgAdminPw() {
-      closeOrgModal();
-      LINK_PW_CONFIG['orgAdmin'] = {
-        pw: ORG_ADMIN_PW,
-        url: null, // iframe으로 처리
-        title: '관리모드',
-        desc: '조직표 관리자 암호를 입력해 주세요'
-      };
-      openLinkPw('orgAdmin');
-    }
-
-    /* 관리모드 iframe 열기 (암호 확인 후 호출) */
-    function openAdminIframe() {
-      const frame = document.getElementById('orgFrame');
-      document.getElementById('iframeTopbarTitle').innerHTML =
-        '<i class="ti ti-sitemap"></i> 부서조직표 · 2026년';
-      frame.src = ORG_URL;
-      document.getElementById('iframeOverlay').classList.add('open');
-
-      frame.onload = function() {
-        try {
-          const doc = frame.contentDocument || frame.contentWindow.document;
-          // 미리보기 탭으로 이동
-          const tabs = doc.querySelectorAll('button.tab[data-view]');
-          tabs.forEach(t => {
-            if (t.getAttribute('data-view') === 'preview') t.click();
-          });
-          // 부서조직표 선택
-          setTimeout(() => {
-            const pvBtns = doc.querySelectorAll('[data-pv]');
-            pvBtns.forEach(b => {
-              if (b.getAttribute('data-pv') === 'table') b.click();
-            });
-          }, 300);
-        } catch(e) {}
-      };
     }
   </script>
 
