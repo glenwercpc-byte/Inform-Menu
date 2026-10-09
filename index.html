@@ -398,6 +398,192 @@
       .link-btn { padding: 1rem 0.4rem 0.85rem; border-radius: 13px; }
       .link-btn i { font-size: 22px; }
     }
+
+    /* 조직표 배지 클릭 */
+    .badge {
+      cursor: pointer;
+      transition: background 0.18s, border-color 0.18s, transform 0.15s;
+      user-select: none;
+    }
+    .badge:hover {
+      background: rgba(255,255,255,0.2);
+      border-color: rgba(255,255,255,0.5);
+      transform: scale(1.04);
+    }
+    .badge:active { transform: scale(0.97); }
+
+    /* 조직표 모드 선택 오버레이 */
+    .org-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(5,15,45,0.78);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .org-overlay.open { display: flex; }
+
+    .org-modal {
+      background: linear-gradient(160deg, #0f2557, #1a3a7c);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 24px;
+      padding: 2rem 1.5rem 1.8rem;
+      width: 100%;
+      max-width: 360px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 24px 70px rgba(0,0,0,0.6);
+      animation: popIn 0.22s ease both;
+    }
+
+    .org-modal-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 3px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.14);
+      width: 100%;
+      padding-bottom: 1rem;
+    }
+    .org-modal-sub {
+      font-size: 12px;
+      color: rgba(180,210,255,0.6);
+      letter-spacing: 1px;
+      margin-top: -0.5rem;
+      text-align: center;
+    }
+
+    .org-btn-row {
+      display: flex;
+      gap: 14px;
+      width: 100%;
+      margin-top: 0.4rem;
+    }
+
+    /* 3D 버튼 */
+    .org-mode-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 1.2rem 0.5rem 1.1rem;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: #fff;
+      position: relative;
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+
+    .org-mode-btn.view-mode {
+      background: linear-gradient(170deg, #1a8a4a, #0f6333);
+      box-shadow: 0 6px 0 #084a23, 0 10px 20px rgba(0,0,0,0.4);
+    }
+    .org-mode-btn.view-mode:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 0 #084a23, 0 14px 24px rgba(0,0,0,0.4);
+    }
+    .org-mode-btn.view-mode:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #084a23, 0 4px 10px rgba(0,0,0,0.4);
+    }
+
+    .org-mode-btn.admin-mode {
+      background: linear-gradient(170deg, #2563eb, #1a3fa8);
+      box-shadow: 0 6px 0 #102a7a, 0 10px 20px rgba(0,0,0,0.4);
+    }
+    .org-mode-btn.admin-mode:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 0 #102a7a, 0 14px 24px rgba(0,0,0,0.4);
+    }
+    .org-mode-btn.admin-mode:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #102a7a, 0 4px 10px rgba(0,0,0,0.4);
+    }
+
+    .org-mode-btn i { font-size: 28px; }
+    .org-mode-btn .org-btn-sub {
+      font-size: 10px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 0.5px;
+    }
+
+    .org-close-btn {
+      width: 100%;
+      padding: 0.65rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      color: rgba(180,210,255,0.7);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+      letter-spacing: 0.5px;
+      transition: background 0.15s;
+      margin-top: 0.3rem;
+    }
+    .org-close-btn:hover { background: rgba(255,255,255,0.12); }
+
+    /* iframe 오버레이 (조회모드) */
+    .iframe-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      background: #fff;
+      flex-direction: column;
+    }
+    .iframe-overlay.open { display: flex; }
+
+    .iframe-topbar {
+      background: linear-gradient(90deg, #0f2557, #1a3a7c);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 1.2rem;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      flex-shrink: 0;
+    }
+    .iframe-topbar-title { display: flex; align-items: center; gap: 8px; }
+    .iframe-topbar-title i { font-size: 18px; color: #7eb8ff; }
+
+    .iframe-close-btn {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 14px;
+      cursor: pointer;
+      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+      letter-spacing: 0.5px;
+      transition: background 0.15s;
+    }
+    .iframe-close-btn:hover { background: rgba(255,255,255,0.22); }
+
+    .iframe-frame {
+      flex: 1;
+      width: 100%;
+      border: none;
+    }
   </style>
 </head>
 <body>
@@ -405,7 +591,7 @@
 
     <p class="church-name">시카고 언약 장로 교회</p>
     <p class="church-name-en">Chicago Covenant Presbyterian Church</p>
-    <div class="badge">온라인 정보 센터</div>
+    <div class="badge" onclick="document.getElementById('orgOverlay').classList.add('open')">온라인 정보 센터</div>
     <div class="admin-wrap" style="display:none">
       <button class="admin-btn" id="adminBtn" onclick="openAdminOrLogout()">
         <i class="ti ti-lock" style="font-size:10px;vertical-align:middle;margin-right:3px;"></i>admin
@@ -589,6 +775,72 @@
     }
   </script>
 
+  <!-- 조직표 스크립트 -->
+  <script>
+    const ORG_URL = 'https://glenwercpc-byte.github.io/Org-Chart/';
+    const ORG_ADMIN_PW = '4241';
+
+    function closeOrgModal() {
+      document.getElementById('orgOverlay').classList.remove('open');
+    }
+
+    /* 조회모드: iframe으로 열고 인쇄버튼 숨김 */
+    function openViewMode() {
+      closeOrgModal();
+      const frame = document.getElementById('orgFrame');
+      // URL에 파라미터로 힌트 전달 (Org-Chart가 지원하면 활용)
+      frame.src = ORG_URL + '?mode=view&tab=print&year=2026';
+      document.getElementById('iframeOverlay').classList.add('open');
+
+      // iframe 로드 후 print 버튼 숨기기 (같은 origin이면 가능)
+      frame.onload = function() {
+        try {
+          const doc = frame.contentDocument || frame.contentWindow.document;
+          // 인쇄/PDF저장 버튼을 찾아 숨김
+          const style = doc.createElement('style');
+          style.textContent = `
+            button[onclick*="print"], button[onclick*="Print"],
+            .print-btn, #printBtn, [class*="print"]:not([class*="preview"]),
+            button:has(i.ti-printer), .ti-printer,
+            button[title*="인쇄"], button[title*="PDF"],
+            [data-action="print"] { display: none !important; }
+          `;
+          doc.head.appendChild(style);
+
+          // 미리보기·인쇄 탭으로 자동 이동 (탭 버튼 클릭)
+          const tabs = doc.querySelectorAll('[role="tab"], .tab, .tab-btn, button');
+          tabs.forEach(t => {
+            if (t.textContent.includes('미리보기') || t.textContent.includes('인쇄')) {
+              t.click();
+            }
+          });
+        } catch(e) {
+          // cross-origin이면 URL 파라미터만 의존
+        }
+      };
+    }
+
+    function closeIframeOverlay() {
+      document.getElementById('iframeOverlay').classList.remove('open');
+      document.getElementById('orgFrame').src = '';
+    }
+
+    /* 관리모드: 암호 입력 후 새 탭으로 열기 */
+    function openOrgAdminPw() {
+      closeOrgModal();
+      // linkPwOverlay 재사용
+      const cfg = {
+        pw: ORG_ADMIN_PW,
+        url: ORG_URL,
+        title: '관리모드',
+        desc: '조직표 관리자 암호를 입력해 주세요'
+      };
+      // 임시로 config에 추가
+      LINK_PW_CONFIG['orgAdmin'] = cfg;
+      openLinkPw('orgAdmin');
+    }
+  </script>
+
   <!-- 링크 전용 암호 모달 -->
   <div class="pw-overlay" id="linkPwOverlay">
     <div class="pw-modal">
@@ -603,6 +855,39 @@
         <button class="pw-cancel-btn" onclick="closeLinkPwModal()">취소</button>
       </div>
     </div>
+  </div>
+
+  <!-- 조직표 모드 선택 오버레이 -->
+  <div class="org-overlay" id="orgOverlay" onclick="if(event.target===this)closeOrgModal()">
+    <div class="org-modal">
+      <div class="org-modal-title">조직표</div>
+      <p class="org-modal-sub">모드를 선택해 주세요</p>
+      <div class="org-btn-row">
+        <button class="org-mode-btn view-mode" onclick="openViewMode()">
+          <i class="ti ti-eye"></i>
+          조회모드
+          <span class="org-btn-sub">View Only</span>
+        </button>
+        <button class="org-mode-btn admin-mode" onclick="openOrgAdminPw()">
+          <i class="ti ti-settings"></i>
+          관리모드
+          <span class="org-btn-sub">Admin</span>
+        </button>
+      </div>
+      <button class="org-close-btn" onclick="closeOrgModal()">✕ 닫기</button>
+    </div>
+  </div>
+
+  <!-- 조회모드 iframe 오버레이 -->
+  <div class="iframe-overlay" id="iframeOverlay">
+    <div class="iframe-topbar">
+      <div class="iframe-topbar-title">
+        <i class="ti ti-sitemap"></i>
+        부서조직표 · 2026년
+      </div>
+      <button class="iframe-close-btn" onclick="closeIframeOverlay()">✕ 닫기</button>
+    </div>
+    <iframe class="iframe-frame" id="orgFrame" src="" allow="same-origin"></iframe>
   </div>
 
   <!-- YouTube 서브메뉴 오버레이 -->
