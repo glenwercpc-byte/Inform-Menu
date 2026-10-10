@@ -583,6 +583,8 @@
       flex: 1;
       width: 100%;
       border: none;
+      /* 모바일: 핀치 줌 허용 */
+      touch-action: pan-x pan-y pinch-zoom;
     }
   </style>
 </head>
@@ -817,6 +819,32 @@
       frame.onload = function () {
         try {
           const doc = frame.contentDocument || frame.contentWindow.document;
+          const win = frame.contentWindow;
+
+          /* ── 모바일 뷰포트: 전체 축소 후 핀치 줌 허용 ── */
+          // 1) 조직표 앱의 viewport 메타를 핀치 줌 허용으로 교체
+          let vp = doc.querySelector('meta[name="viewport"]');
+          if (!vp) { vp = doc.createElement('meta'); vp.name = 'viewport'; doc.head.appendChild(vp); }
+          vp.content = 'width=device-width, initial-scale=0.6, minimum-scale=0.3, maximum-scale=4, user-scalable=yes';
+
+          // 2) 모바일 전용 CSS 주입
+          const mobileStyle = doc.createElement('style');
+          mobileStyle.textContent = `
+            /* 모바일: 전체를 화면에 맞게 축소, 핀치 줌으로 확대 가능 */
+            @media (max-width: 768px) {
+              html { touch-action: pan-x pan-y pinch-zoom; }
+              body { min-width: 0 !important; overflow-x: auto; }
+              main { padding: 8px !important; }
+              .sheet { padding: 10px 6px !important; overflow-x: auto; }
+              table.org { font-size: 11px !important; min-width: 480px !important; }
+              table.org th, table.org td { padding: 4px 5px !important; }
+              .sheet h1 { font-size: 16px !important; margin-bottom: 10px !important; }
+              .chart { font-size: 11px !important; min-width: 700px !important; }
+              .preview-tools { flex-wrap: wrap; gap: 6px !important; }
+              .seg button { font-size: 12px !important; padding: 6px 10px !important; }
+            }
+          `;
+          doc.head.appendChild(mobileStyle);
 
           if (isViewMode) {
             /* 조회모드: 불필요 요소 숨김 */
@@ -916,7 +944,9 @@
       </div>
       <button class="iframe-close-btn" onclick="closeIframeOverlay()">✕ 닫기</button>
     </div>
-    <iframe class="iframe-frame" id="orgFrame" src="" allow="same-origin"></iframe>
+    <iframe class="iframe-frame" id="orgFrame" src=""
+            allow="same-origin"
+            style="touch-action: pan-x pan-y pinch-zoom; -webkit-overflow-scrolling: touch;"></iframe>
   </div>
 
   <!-- YouTube 서브메뉴 오버레이 -->
