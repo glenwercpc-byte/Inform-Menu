@@ -1,986 +1,1430 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>시카고 언약 장로 교회 – 온라인 정보 센터</title>
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#0f2557" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="CCPC" />
-  <link rel="apple-touch-icon" href="icon-180x180.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="icon-32x32.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>부서 조직표 입력 | CCPC</title>
+<meta name="theme-color" content="#1f2d4d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1f2d4d;
+    --navy-2: #2c3d63;
+    --gold: #c9a24a;
+    --gold-soft: #f6efdd;
+    --bg: #f4f5f8;
+    --card: #ffffff;
+    --line: #dfe3ea;
+    --text: #1d2433;
+    --muted: #6b7385;
+    --danger: #b3261e;
+    --ok: #1e7a46;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: 'Noto Sans KR', -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.45;
+    padding-bottom: 80px;
+  }
+  button, input, select, textarea { font: inherit; color: inherit; }
 
-    body {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
-      background: linear-gradient(160deg, #0a1a4a 0%, #0f2557 40%, #1a3a7c 70%, #0f2557 100%);
-      padding: 2.5rem 1.25rem;
-    }
+  /* ---------- 상단 바 ---------- */
+  .topbar {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--navy); color: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  }
+  .topbar-inner { max-width: 980px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .brand { font-weight: 700; font-size: 17px; letter-spacing: -.2px; margin-right: auto; }
+  .brand small { display: block; font-weight: 400; font-size: 11px; color: var(--gold); letter-spacing: .5px; }
+  .yearbox { display: flex; align-items: center; gap: 6px; }
+  .yearbox select {
+    background: var(--navy-2); color: #fff; border: 1px solid #44557d; border-radius: 8px; padding: 7px 10px; font-weight: 700;
+  }
+  .status { font-size: 12px; color: #c8cfdf; min-width: 64px; text-align: right; }
+  .status.dirty { color: var(--gold); font-weight: 700; }
 
-    .card {
-      width: 100%;
-      max-width: 960px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+  .tabs { max-width: 980px; margin: 0 auto; display: flex; gap: 2px; padding: 0 12px; overflow-x: auto; scrollbar-width: none; }
+  .tab {
+    background: none; border: 0; color: #c8cfdf; padding: 10px 14px; white-space: nowrap; flex: none; cursor: pointer; border-bottom: 3px solid transparent; font-weight: 500;
+  }
+  .tab[aria-selected="true"] { color: #fff; border-bottom-color: var(--gold); }
 
-    /* 로고 */
-    .logo-img {
-      height: 72px;
-      width: auto;
-      margin-bottom: 1rem;
-      filter: brightness(0) invert(1) drop-shadow(0 2px 12px rgba(120,180,255,0.4));
-      animation: fadeDown 0.6s ease both;
-    }
+  main { max-width: 980px; margin: 0 auto; padding: 16px; }
+  .banner { background: var(--gold-soft); border: 1px solid #e6d4a6; color: #6b5413; padding: 10px 12px; border-radius: var(--radius); margin-bottom: 14px; font-size: 13px; }
+  .banner.error { background: #fdecea; border-color: #f2b8b5; color: var(--danger); }
 
-    /* 교회명 */
-    .church-name {
-      font-size: clamp(16px, 4vw, 20px);
-      font-weight: 700;
-      color: #ffffff;
-      letter-spacing: 2px;
-      text-align: center;
-      margin-bottom: 3px;
-      animation: fadeDown 0.65s ease 0.05s both;
-    }
-    .church-name-en {
-      font-size: 10px;
-      color: rgba(180, 210, 255, 0.65);
-      letter-spacing: 1.5px;
-      text-align: center;
-      margin-bottom: 1.4rem;
-      animation: fadeDown 0.65s ease 0.1s both;
-    }
+  /* ---------- 버튼 ---------- */
+  .btn {
+    border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: 7px 12px; cursor: pointer; white-space: nowrap;
+  }
+  .btn:hover { border-color: #b9c1d1; }
+  .btn.primary { background: var(--gold); border-color: var(--gold); color: #1f1a0c; font-weight: 700; }
+  .btn.primary:disabled { opacity: .5; cursor: default; }
+  .btn.ghost-light { background: transparent; border-color: #44557d; color: #fff; }
+  .btn.add { width: 100%; border-style: dashed; color: var(--navy); background: transparent; padding: 11px; font-weight: 500; }
+  .icon-btn { border: 0; background: none; cursor: pointer; padding: 6px 7px; border-radius: 6px; color: var(--muted); font-size: 15px; line-height: 1; }
+  .icon-btn:hover { background: #eef0f5; color: var(--text); }
+  .icon-btn.del:hover { background: #fdecea; color: var(--danger); }
+  .icon-btn:disabled { opacity: .3; cursor: default; background: none; }
 
-    /* 배지 */
-    .badge {
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.28);
-      color: #fff;
-      font-size: clamp(14px, 3.5vw, 17px);
-      font-weight: 700;
-      letter-spacing: 4px;
-      padding: 7px 28px;
-      border-radius: 50px;
-      margin-bottom: 1.8rem;
-      animation: fadeDown 0.65s ease 0.15s both;
-    }
+  /* ---------- 카드 ---------- */
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; margin: 4px 2px 12px; gap: 10px; }
+  .section-head h2 { font-size: 16px; margin: 0; color: var(--navy); white-space: nowrap; }
+  .section-head p { margin: 0; color: var(--muted); font-size: 12px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 12px; overflow: hidden; }
+  .card-head { display: flex; align-items: center; gap: 8px; padding: 10px 10px 10px 14px; background: #fafbfd; border-bottom: 1px solid var(--line); }
+  .card-head .num { color: var(--muted); font-size: 12px; min-width: 18px; }
+  .card-head input.title { flex: 1; font-weight: 700; font-size: 15px; border: 1px solid transparent; background: transparent; padding: 6px 8px; border-radius: 6px; min-width: 0; }
+  .card-head input.title:hover { border-color: var(--line); background: #fff; }
+  .card-head input.title:focus { border-color: var(--gold); background: #fff; outline: none; }
+  .card-tools { display: flex; gap: 2px; }
+  .card-body { padding: 12px 14px 14px; }
+  .team-tag { font-size: 11px; color: var(--navy); background: #e8ecf5; border-radius: 99px; padding: 2px 8px; white-space: nowrap; }
 
-    /* 구분선 */
-    .divider {
-      width: 100%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(120,180,255,0.35), rgba(200,160,255,0.3), rgba(120,180,255,0.35), transparent);
-      margin-bottom: 1.8rem;
-      animation: fadeIn 0.8s ease 0.2s both;
-    }
+  label.f { display: block; font-size: 12px; color: var(--muted); margin-bottom: 3px; }
+  .inp {
+    width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: #fff;
+  }
+  .inp:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,162,74,.18); }
+  textarea.inp { resize: vertical; min-height: 42px; }
+  .grid { display: grid; gap: 10px; }
+  .grid.c4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .count { font-size: 11px; color: var(--muted); float: right; }
 
-    /* 그리드 */
-    .btn-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      width: 100%;
-    }
+  .rows { display: grid; gap: 8px; }
+  .row { display: grid; grid-template-columns: 150px 1fr 120px auto; gap: 8px; align-items: start; }
+  .row.grp { grid-template-columns: 150px 1fr auto; }
+  .row-labels { display: grid; grid-template-columns: 150px 1fr 120px auto; gap: 8px; font-size: 12px; color: var(--muted); }
+  .row-labels.grp { grid-template-columns: 150px 1fr auto; }
+  .row-labels span:last-child { width: 30px; }
+  .sub { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--line); }
+  .sub-title { font-size: 12px; color: var(--navy); font-weight: 700; margin-bottom: 6px; }
+  .mini-add { margin-top: 8px; border: 0; background: none; color: var(--navy); cursor: pointer; padding: 4px 0; font-size: 13px; font-weight: 500; }
+  .mini-add:hover { text-decoration: underline; }
 
-    .link-btn {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      padding: 1.2rem 0.5rem 1rem;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 16px;
-      color: #e8f0ff;
-      font-size: clamp(12px, 3vw, 14px);
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      text-decoration: none;
-      transition: background 0.18s, border-color 0.18s, transform 0.18s;
-      animation: fadeUp 0.55s ease both;
-    }
-    .link-btn:hover {
-      background: rgba(255, 255, 255, 0.15);
-      border-color: rgba(255, 255, 255, 0.35);
-      transform: translateY(-4px);
-    }
-    .link-btn:active { transform: scale(0.97); }
+  /* ---------- 미리보기 (원본 조직표 모양) ---------- */
+  .preview-tools { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 10px; }
+  .sheet { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 28px 22px; overflow-x: auto; }
+  .sheet h1 { text-align: center; font-size: 24px; margin: 0 0 18px; letter-spacing: 1px; }
+  table.org { width: 100%; border-collapse: collapse; border: 2px solid #222; font-size: 13px; min-width: 620px; }
+  table.org th, table.org td { border: 1px solid #555; padding: 6px 8px; vertical-align: middle; }
+  table.org th { background: #fff; font-weight: 700; text-align: center; }
+  table.org .hdr th { background: #f1f1f1; }
+  table.org td.c { text-align: center; font-weight: 700; }
+  table.org td.m { white-space: pre-line; }
+  .empty { text-align: center; color: var(--muted); padding: 40px 10px; }
 
-    .link-btn i {
-      font-size: 26px;
-      color: var(--ic, #7eb8ff);
-    }
+  /* ---------- 모달 ---------- */
+  .modal-bg { position: fixed; inset: 0; background: rgba(15,20,35,.45); display: none; align-items: center; justify-content: center; z-index: 50; padding: 16px; }
+  .modal-bg.open { display: flex; }
+  .modal { background: #fff; border-radius: 14px; width: 100%; max-width: 380px; padding: 20px; box-shadow: 0 12px 40px rgba(0,0,0,.25); }
+  .modal h3 { margin: 0 0 6px; color: var(--navy); font-size: 17px; }
+  .modal p { margin: 0 0 14px; color: var(--muted); font-size: 13px; }
+  .modal .grid { margin-bottom: 14px; }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+  .modal .err { color: var(--danger); font-size: 13px; min-height: 18px; margin: -6px 0 8px; }
 
-    .btn-en {
-      font-size: 0.72em;
-      font-weight: 500;
-      color: rgba(200, 220, 255, 0.55);
-      letter-spacing: 0.3px;
-      margin-top: -2px;
-    }
+  .toast {
+    position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%) translateY(20px); opacity: 0;
+    background: var(--navy); color: #fff; padding: 10px 16px; border-radius: 99px; font-size: 14px; transition: .25s; z-index: 60; pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.error { background: var(--danger); }
 
-    .link-btn.full-width {
-      grid-column: 1 / -1;
-      flex-direction: row;
-      gap: 12px;
-      padding: 1rem 1.5rem;
-      justify-content: center;
-    }
-    .link-btn.full-width i { font-size: 22px; }
+  .loading { position: fixed; inset: 0; background: rgba(244,245,248,.7); display: none; align-items: center; justify-content: center; z-index: 40; font-weight: 500; color: var(--navy); }
+  .loading.on { display: flex; }
 
-    /* 애니메이션 */
-    .link-btn:nth-child(1) { animation-delay: 0.28s; }
-    .link-btn:nth-child(2) { animation-delay: 0.34s; }
-    .link-btn:nth-child(3) { animation-delay: 0.40s; }
-    .link-btn:nth-child(4) { animation-delay: 0.46s; }
-    .link-btn:nth-child(5) { animation-delay: 0.52s; }
-    .link-btn:nth-child(6) { animation-delay: 0.58s; }
-    .link-btn:nth-child(7) { animation-delay: 0.64s; }
+  /* ---------- 조직도 (그림에서 바로 편집) ---------- */
+  .org-toolbar { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 4px 2px 12px; }
+  .org-toolbar h2 { font-size: 16px; margin: 0; color: var(--navy); }
+  .org-toolbar p { margin: 2px 0 0; color: var(--muted); font-size: 12px; }
+  .org-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .switch { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer; user-select: none; }
+  .switch input { width: 16px; height: 16px; accent-color: var(--navy); }
+  .chart { position: relative; }
+  .chart.edit .box[data-path] { cursor: pointer; transition: box-shadow .12s; }
+  .chart.edit .box[data-path]:hover { box-shadow: 0 0 0 3px rgba(201,162,74,.45); }
+  .chart .box.sel { box-shadow: 0 0 0 3px var(--gold) !important; background: #fffaf0; }
+  .chart .box .ph { color: #aaa; font-weight: 400; }
+  .chart .box.add { border: 1.5px dashed #9aa3b5; color: #6b7385; background: #f7f8fb; cursor: pointer; font-size: 12px; }
+  .chart .box.add:hover { border-color: var(--gold); color: var(--navy); background: #fffaf0; }
+  .opanel { position: absolute; z-index: 6; display: none; width: 304px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 30px rgba(20,30,60,.18); padding: 10px; font-size: 13px; }
+  .opanel.open { display: block; }
+  .opanel .opt { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+  .opanel .inp { margin-bottom: 8px; font-weight: 700; }
+  .opbtns { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .opbtns button { border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: 6px 8px; cursor: pointer; font-size: 12.5px; }
+  .opbtns button:hover:not(:disabled) { border-color: #b9c1d1; background: #f7f8fb; }
+  .opbtns button:disabled { opacity: .35; cursor: default; }
+  .opbtns button.del { color: var(--danger); }
+  .opbtns button.done { background: var(--navy); color: #fff; border-color: var(--navy); }
 
-    @keyframes fadeDown {
-      from { opacity: 0; transform: translateY(-14px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(18px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
+  /* ---------- 조직도 그림 ---------- */
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; margin-right: auto; }
+  .seg button { border: 0; background: #fff; padding: 7px 14px; cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--navy); color: #fff; }
+  .chart { -webkit-print-color-adjust: exact; print-color-adjust: exact; --ln: 1.5px solid #222; font-size: 12.5px; color: #111; width: max-content; min-width: 560px; margin: 0 auto; padding: 4px 6px 10px; transform: scale(var(--fz, 1)); transform-origin: 0 0; }
+  .chart .ttl { display: table; margin: 0 auto calc(14px * var(--vs, 1)); background: #e3e3e3; color: #111; border: 1px solid #c9c9c9; font-weight: 700; font-size: 20px; padding: 4px 34px; letter-spacing: .5px; }
+  .chart .box { border: 1.5px solid #222; background: #fff; padding: calc(2px * var(--vs, 1)) 8px; text-align: center; white-space: nowrap; line-height: 1.25; }
+  .chart .col3 { display: grid; grid-template-columns: minmax(0, 1fr) 2px minmax(0, 1fr); }
+  .chart .spine { border-left: 2px solid #222; }
+  .chart .top { display: flex; flex-direction: column; align-items: center; }
+  .chart .top .v { width: 0; height: calc(12px * var(--vs, 1)); border-left: 2px solid #222; }
+  .chart .sides { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 2px minmax(0, 1fr); row-gap: calc(6px * var(--vs, 1)); padding: calc(8px * var(--vs, 1)) 0; }
+  .chart .sides::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; margin-left: -1px; border-left: 2px solid #222; }
+  .chart .sl, .chart .sr { display: flex; align-items: center; }
+  .chart .sl { grid-column: 1; justify-content: flex-end; }
+  .chart .sr { grid-column: 3; justify-content: flex-start; }
+  .chart .sitem { display: flex; align-items: center; }
+  .chart .sl .sitem::after, .chart .sr .sitem::before { content: ''; width: var(--sline, 18px); border-top: var(--ln); }
+  .chart .sl .sitem.noline::after, .chart .sr .sitem.noline::before { border-top: 0; }
+  .chart .sitem > .box { width: 112px; }
+  .chart .kids .box { width: 100px; }
+  .chart .top .box { width: 112px; }
+  .chart .bottom ul.h > li > .box { min-width: 96px; }
+  .chart .kids { display: flex; flex-direction: column; position: relative; padding-left: 10px; }
+  .chart .kids::before { content: ''; position: absolute; left: 0; top: 50%; width: 10px; border-top: var(--ln); }
+  .chart .kid { position: relative; padding: calc(2px * var(--vs, 1)) 0 calc(2px * var(--vs, 1)) 12px; }
+  .chart .kid::before { content: ''; position: absolute; left: 0; top: 50%; width: 12px; border-top: var(--ln); }
+  .chart .kid::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; border-left: var(--ln); }
+  .chart .kid:first-child::after { top: 50%; }
+  .chart .kid:last-child::after { bottom: 50%; }
+  .chart .kid:only-child::after { display: none; }
+  .chart .kids.kl { padding-left: 0; padding-right: 10px; }
+  .chart .kids.kl::before { left: auto; right: 0; }
+  .chart .kids.kl .kid { padding: calc(2px * var(--vs, 1)) 12px calc(2px * var(--vs, 1)) 0; }
+  .chart .kids.kl .kid::before { left: auto; right: 0; }
+  .chart .kids.kl .kid::after { left: auto; right: 0; }
+  .chart .box.add.vbox.small { min-height: calc(56px * var(--vb, 1)); padding: 6px 2px; }
+  /* 가로 막대 트리 (팀/부서/소그룹/하단) */
+  .chart ul.h { display: flex; list-style: none; margin: 0; padding: 0; }
+  .chart ul.h > li { position: relative; display: flex; flex-direction: column; align-items: center; padding: calc(10px * var(--vs, 1)) 2px 0; }
+  .chart ul.h > li::before, .chart ul.h > li::after { content: ''; position: absolute; top: 0; width: 50%; border-top: var(--ln); }
+  .chart ul.h > li::before { left: 0; }
+  .chart ul.h > li::after { right: 0; }
+  .chart ul.h > li > .drop { position: absolute; top: 0; left: 50%; height: calc(10px * var(--vs, 1)); border-left: var(--ln); }
+  .chart ul.h > li:first-child::before, .chart ul.h > li:last-child::after { border-top: 0; }
+  .chart ul.h.keep-l > li:first-child::before { border-top: var(--ln); }
+  .chart ul.h.keep-r > li:last-child::after { border-top: var(--ln); }
+  .chart ul.h > li:only-child::before, .chart ul.h > li:only-child::after { border-top: 0; }
+  .chart .stem { width: 0; height: calc(10px * var(--vs, 1)); border-left: var(--ln); }
+  .chart .vbox { writing-mode: vertical-rl; text-orientation: upright; letter-spacing: 1px; padding: calc(5px * var(--vs, 1)) 1px; min-height: calc(84px * var(--vb, 1)); }
+  .chart .team > .vbox { min-height: calc(92px * var(--vb, 1)); padding: calc(5px * var(--vs, 1)) 2px; }
+  .chart .teams-wrap .half { display: flex; padding-top: 0; }
+  .chart .teams-wrap .half.l { justify-content: flex-end; }
+  .chart .teams-wrap .half.r { justify-content: flex-start; }
+  .chart .teams-wrap .half > ul.h { padding-top: calc(12px * var(--vs, 1)); }
+  .chart .teams-wrap .half > ul.h { width: auto; }
+  .chart .teams-wrap .bar { position: relative; }
+  .chart .teams-wrap .bar::before { content: ''; position: absolute; top: calc(12px * var(--vs, 1)); left: 0; right: 0; border-top: var(--ln); }
+  .chart .teams-wrap .half.l > ul.h > li:last-child::after, .chart .teams-wrap .half.r > ul.h > li:first-child::before { border-top: var(--ln); }
+  .chart .teams-wrap .half.l > ul.h > li:last-child::after { right: -1px; width: calc(50% + 1px); }
+  .chart .sub3 { display: flex; flex-direction: column; align-items: center; width: 0; }
+  .chart .hbox { white-space: normal; width: max-content; max-width: 104px; padding: 2px 6px; font-size: 11.5px; }
+  .chart .lvl3.vert ul.h > li .box { min-height: calc(52px * var(--vb, 1)); }
+  .chart .bottom { display: flex; justify-content: center; }
+  .chart .bottom .box { padding: 3px 12px; }
+  .chart .spine-gap { height: calc(18px * var(--vs, 1)); display: grid; grid-template-columns: minmax(0, 1fr) 2px minmax(0, 1fr); }
+  .chart-wrap { overflow-x: auto; position: relative; }
 
-    /* YouTube 서브메뉴 오버레이 */
-    .yt-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(5, 15, 45, 0.7);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-    }
-    .yt-overlay.open { display: flex; }
+  /* ---------- 교회 연혁 ---------- */
+  .hist-tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+  .hist-tools .inp { width: auto; }
+  .hist-tools #histQ { flex: 1; min-width: 180px; max-width: 320px; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .chip { border: 1px solid var(--line); background: #fff; border-radius: 99px; padding: 4px 11px; font-size: 12.5px; cursor: pointer; }
+  .chip[aria-pressed="true"] { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .hist-info { font-size: 12.5px; color: var(--muted); margin: 0 2px 8px; }
+  .hyear { background: #fff; border: 1px solid var(--line); border-radius: 10px; margin-bottom: 10px; overflow: hidden; }
+  .hy { display: flex; align-items: center; gap: 8px; padding: 8px 14px; background: #fafbfd; }
+  .hy .hyl { font-weight: 700; color: var(--navy); font-size: 15px; }
+  .hy .cnt { font-size: 12px; color: var(--muted); margin-right: auto; }
+  .hrow { display: grid; grid-template-columns: 150px 1fr; gap: 12px; padding: 8px 14px; border-top: 1px solid #eef0f4; cursor: pointer; }
+  .hrow:hover { background: #fffaf0; }
+  .hrow:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+  .hrow .hd { color: var(--muted); font-size: 13.5px; }
+  .hrow .ht { white-space: pre-line; }
+  .hrow mark { background: #fde9a8; padding: 0 1px; border-radius: 2px; }
+  .hrow.editing { grid-template-columns: 1fr; cursor: default; background: #fffaf0; box-shadow: inset 3px 0 0 var(--gold); }
+  .hgrid { display: grid; grid-template-columns: 110px 1fr; gap: 8px; margin-bottom: 8px; }
+  .hbtns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .hbtns button { border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; }
+  .hbtns button:disabled { opacity: .35; cursor: default; }
+  .hbtns .del { color: var(--danger); margin-left: auto; }
+  .hbtns .done { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .hist-empty { background: #fff; border: 1px dashed #c9cfdb; border-radius: 10px; padding: 26px 16px; text-align: center; color: var(--muted); }
+  .hist-empty .btn { margin-top: 10px; }
+  table.hdoc { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  table.hdoc td { border: 1px solid #999; padding: 4px 8px; vertical-align: top; }
+  table.hdoc td.y { font-weight: 700; text-align: center; white-space: nowrap; }
+  table.hdoc td.d { white-space: nowrap; text-align: center; }
+  table.hdoc tr.alt td { background: #e8f2fc; }
+  table.hdoc { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  table.hdoc td.t { white-space: pre-line; }
+  table.hdoc tr { break-inside: avoid; }
 
-    .yt-modal {
-      background: linear-gradient(160deg, #0f2557, #1a3a7c);
-      border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 22px;
-      padding: 1.6rem 1.25rem;
-      width: 100%;
-      max-width: 340px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-      animation: popIn 0.22s ease both;
-    }
-    @keyframes popIn {
-      from { opacity: 0; transform: scale(0.92); }
-      to   { opacity: 1; transform: scale(1); }
-    }
+  @media (max-width: 720px) {
+    body { font-size: 14px; }
+    .topbar-inner { padding: 8px 12px; }
+    .brand { font-size: 15px; width: 100%; }
+    .yearbox { margin-right: auto; }
+    main { padding: 12px; }
+    .section-head { flex-direction: column; align-items: flex-start; gap: 4px; }
+    .tab { padding: 10px 10px; }
+    .node .lvl { display: none; }
+    .grid.c4 { grid-template-columns: 1fr 1fr; }
+    .row, .row.grp { grid-template-columns: 1fr auto; }
+    .row > :nth-child(2), .row.grp > :nth-child(2) { grid-column: 1 / -1; grid-row: 2; }
+    .row > :nth-child(3) { grid-column: 1 / -1; grid-row: 3; }
+    .row > .icon-btn:last-child { grid-column: 2; grid-row: 1; }
+    .hrow { grid-template-columns: 1fr; gap: 2px; }
+    .hgrid { grid-template-columns: 90px 1fr; }
+    .row-labels { display: none; }
+    .row, .row.grp { padding-bottom: 8px; border-bottom: 1px solid #f0f1f4; }
+    .sheet { padding: 16px 10px; }
+    .opanel { position: fixed; left: 8px !important; right: 8px; top: auto !important; bottom: 8px; width: auto; z-index: 30; }
+    .org-hint-m { display: block !important; }
+  }
 
-    .yt-modal-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 15px;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: 1px;
-      margin-bottom: 1.2rem;
-      padding-bottom: 0.9rem;
-      border-bottom: 1px solid rgba(255,255,255,0.12);
-    }
-    .yt-modal-title i { font-size: 20px; color: #f87171; }
+  @media print {
 
-    .yt-menu-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 1rem;
-    }
-
-    .yt-menu-btn {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 0.85rem 1rem;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.13);
-      border-radius: 12px;
-      color: #e8f0ff;
-      font-size: 14px;
-      font-weight: 600;
-      text-decoration: none;
-      letter-spacing: 0.3px;
-      transition: background 0.15s, border-color 0.15s;
-      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
-    }
-    .yt-menu-btn:hover {
-      background: rgba(255,255,255,0.16);
-      border-color: rgba(255,255,255,0.3);
-    }
-    .yt-menu-btn i {
-      font-size: 20px;
-      color: var(--mc, #f87171);
-      flex-shrink: 0;
-    }
-    .yt-menu-btn .badge-live {
-      margin-left: auto;
-      background: #ef4444;
-      color: #fff;
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      padding: 2px 7px;
-      border-radius: 20px;
-    }
-
-    .yt-close-btn {
-      width: 100%;
-      padding: 0.7rem;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 10px;
-      color: rgba(180,210,255,0.7);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
-      letter-spacing: 0.5px;
-      transition: background 0.15s;
-    }
-    .yt-close-btn:hover { background: rgba(255,255,255,0.12); }
-
-    /* Admin 버튼 */
-    .admin-wrap {
-      margin-bottom: 1.4rem;
-      animation: fadeDown 0.65s ease 0.18s both;
-    }
-    .admin-btn {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 20px;
-      color: rgba(180,210,255,0.6);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 2px;
-      padding: 4px 16px;
-      cursor: pointer;
-      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
-      transition: background 0.15s, color 0.15s;
-    }
-    .admin-btn:hover { background: rgba(255,255,255,0.13); color: rgba(200,230,255,0.9); }
-    .admin-btn.active { background: rgba(100,200,100,0.15); border-color: rgba(100,220,100,0.4); color: rgba(150,255,150,0.85); }
-
-    /* 숨김 버튼 */
-    .admin-only { display: none; }
-    .admin-only.visible { display: flex; }
-
-    /* 암호 모달 */
-    .pw-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(5,15,45,0.75);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-    }
-    .pw-overlay.open { display: flex; }
-    .pw-modal {
-      background: linear-gradient(160deg, #0f2557, #1a3a7c);
-      border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 22px;
-      padding: 2rem 1.5rem;
-      width: 100%;
-      max-width: 300px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-      animation: popIn 0.22s ease both;
-    }
-    .pw-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: 2px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .pw-title i { color: #fcd34d; font-size: 18px; }
-    .pw-input {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 10px;
-      color: #fff;
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: 6px;
-      text-align: center;
-      font-family: monospace;
-      outline: none;
-    }
-    .pw-input:focus { border-color: rgba(120,180,255,0.6); }
-    .pw-input.error { border-color: rgba(255,100,100,0.7); animation: shake 0.3s ease; }
-    .pw-error-msg {
-      font-size: 12px;
-      color: #f87171;
-      display: none;
-    }
-    .pw-error-msg.show { display: block; }
-    .pw-row { display: flex; gap: 8px; width: 100%; }
-    .pw-confirm-btn {
-      flex: 1;
-      padding: 0.7rem;
-      background: linear-gradient(135deg, #3b82f6, #6366f1);
-      border: none;
-      border-radius: 10px;
-      color: #fff;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
-      transition: opacity 0.15s;
-    }
-    .pw-confirm-btn:hover { opacity: 0.85; }
-    .pw-cancel-btn {
-      padding: 0.7rem 1rem;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 10px;
-      color: rgba(180,210,255,0.7);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
-      transition: background 0.15s;
-    }
-    .pw-cancel-btn:hover { background: rgba(255,255,255,0.12); }
-    @keyframes shake {
-      0%,100%{ transform:translateX(0); }
-      25%{ transform:translateX(-6px); }
-      75%{ transform:translateX(6px); }
-    }
-
-    /* 태블릿: 2열 */
-    @media (max-width: 768px) {
-      .btn-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    /* 모바일: 2열 유지 */
-    @media (max-width: 480px) {
-      body { padding: 2rem 1rem; }
-      .logo-img { height: 58px; }
-      .btn-grid { gap: 9px; grid-template-columns: repeat(2, 1fr); }
-      .link-btn { padding: 1rem 0.4rem 0.85rem; border-radius: 13px; }
-      .link-btn i { font-size: 22px; }
-    }
-
-    /* 조직표 배지 클릭 */
-    .badge {
-      cursor: pointer;
-      transition: background 0.18s, border-color 0.18s, transform 0.15s;
-      user-select: none;
-    }
-    .badge:hover {
-      background: rgba(255,255,255,0.2);
-      border-color: rgba(255,255,255,0.5);
-      transform: scale(1.04);
-    }
-    .badge:active { transform: scale(0.97); }
-
-    /* 조직표 모드 선택 오버레이 */
-    .org-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(5,15,45,0.78);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      z-index: 300;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-    }
-    .org-overlay.open { display: flex; }
-
-    .org-modal {
-      background: linear-gradient(160deg, #0f2557, #1a3a7c);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 24px;
-      padding: 2rem 1.5rem 1.8rem;
-      width: 100%;
-      max-width: 360px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      box-shadow: 0 24px 70px rgba(0,0,0,0.6);
-      animation: popIn 0.22s ease both;
-    }
-
-    .org-modal-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: 3px;
-      text-align: center;
-      border-bottom: 1px solid rgba(255,255,255,0.14);
-      width: 100%;
-      padding-bottom: 1rem;
-    }
-    .org-modal-sub {
-      font-size: 12px;
-      color: rgba(180,210,255,0.6);
-      letter-spacing: 1px;
-      margin-top: -0.5rem;
-      text-align: center;
-    }
-
-    .org-btn-row {
-      display: flex;
-      gap: 14px;
-      width: 100%;
-      margin-top: 0.4rem;
-    }
-
-    /* 3D 버튼 */
-    .org-mode-btn {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      padding: 1.2rem 0.5rem 1.1rem;
-      border: none;
-      border-radius: 16px;
-      cursor: pointer;
-      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      color: #fff;
-      position: relative;
-      transition: transform 0.12s, box-shadow 0.12s;
-    }
-
-    .org-mode-btn.view-mode {
-      background: linear-gradient(170deg, #1a8a4a, #0f6333);
-      box-shadow: 0 6px 0 #084a23, 0 10px 20px rgba(0,0,0,0.4);
-    }
-    .org-mode-btn.view-mode:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 0 #084a23, 0 14px 24px rgba(0,0,0,0.4);
-    }
-    .org-mode-btn.view-mode:active {
-      transform: translateY(4px);
-      box-shadow: 0 2px 0 #084a23, 0 4px 10px rgba(0,0,0,0.4);
-    }
-
-    .org-mode-btn.admin-mode {
-      background: linear-gradient(170deg, #2563eb, #1a3fa8);
-      box-shadow: 0 6px 0 #102a7a, 0 10px 20px rgba(0,0,0,0.4);
-    }
-    .org-mode-btn.admin-mode:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 0 #102a7a, 0 14px 24px rgba(0,0,0,0.4);
-    }
-    .org-mode-btn.admin-mode:active {
-      transform: translateY(4px);
-      box-shadow: 0 2px 0 #102a7a, 0 4px 10px rgba(0,0,0,0.4);
-    }
-
-    .org-mode-btn i { font-size: 28px; }
-    .org-mode-btn .org-btn-sub {
-      font-size: 10px;
-      font-weight: 500;
-      color: rgba(255,255,255,0.6);
-      letter-spacing: 0.5px;
-    }
-
-    .org-close-btn {
-      width: 100%;
-      padding: 0.65rem;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 10px;
-      color: rgba(180,210,255,0.7);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
-      letter-spacing: 0.5px;
-      transition: background 0.15s;
-      margin-top: 0.3rem;
-    }
-    .org-close-btn:hover { background: rgba(255,255,255,0.12); }
-
-    /* iframe 오버레이 (조회모드) */
-    .iframe-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 400;
-      background: #fff;
-      flex-direction: column;
-    }
-    .iframe-overlay.open { display: flex; }
-
-    .iframe-topbar {
-      background: linear-gradient(90deg, #0f2557, #1a3a7c);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.65rem 1.2rem;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      flex-shrink: 0;
-    }
-    .iframe-topbar-title { display: flex; align-items: center; gap: 8px; }
-    .iframe-topbar-title i { font-size: 18px; color: #7eb8ff; }
-
-    .iframe-close-btn {
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 8px;
-      color: #fff;
-      font-size: 12px;
-      font-weight: 700;
-      padding: 5px 14px;
-      cursor: pointer;
-      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
-      letter-spacing: 0.5px;
-      transition: background 0.15s;
-    }
-    .iframe-close-btn:hover { background: rgba(255,255,255,0.22); }
-
-    .iframe-frame {
-      flex: 1;
-      width: 100%;
-      border: none;
-      /* 모바일: 핀치 줌 허용 */
-      touch-action: pan-x pan-y pinch-zoom;
-    }
-  </style>
+    body { background: #fff; padding: 0; }
+    .topbar, .preview-tools, .banner, #view-gigu, #view-buseo, #view-org, #view-hist, .toast { display: none !important; }
+    .chart { zoom: var(--pz, 1) !important; transform: none !important; margin: 0 auto !important; --vs: 1 !important; --vb: 1 !important; break-inside: avoid; }
+    main { padding: 0; max-width: none; }
+    #view-preview { display: block !important; }
+    .sheet { border: 0; padding: 0; overflow: visible; }
+    table.org { min-width: 0; font-size: 11.5px; }
+    table.org th, table.org td { padding: 4px 6px; }
+    .sheet h1 { font-size: 20px; margin-bottom: 10px; }
+  }
+</style>
+<style id="pageStyle">@page { size: letter portrait; margin: 12mm; }</style>
 </head>
 <body>
-  <div class="card">
 
-    <p class="church-name">시카고 언약 장로 교회</p>
-    <p class="church-name-en">Chicago Covenant Presbyterian Church</p>
-    <div class="badge" onclick="document.getElementById('orgOverlay').classList.add('open')">온라인 정보 센터</div>
-    <div class="admin-wrap" style="display:none">
-      <button class="admin-btn" id="adminBtn" onclick="openAdminOrLogout()">
-        <i class="ti ti-lock" style="font-size:10px;vertical-align:middle;margin-right:3px;"></i>admin
-      </button>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">부서 조직표 입력<small>CHICAGO COVENANT PRESBYTERIAN CHURCH</small></div>
+    <div class="yearbox">
+      <select id="yearSel" aria-label="연도 선택"></select>
+      <button class="btn ghost-light" id="newYearBtn" type="button">새 연도</button>
     </div>
-    <div class="divider"></div>
-
-    <div class="btn-grid">
-      <a class="link-btn" style="--ic:#7eb8ff" href="https://chicagocovenant.org/" target="_blank" rel="noopener">
-        <i class="ti ti-world"></i>
-        <span>교회 웹사이트</span>
-        <span class="btn-en">Church Website</span>
-      </a>
-      <button class="link-btn" style="--ic:#f87171" onclick="document.getElementById('ytOverlay').classList.add('open')">
-        <i class="ti ti-brand-youtube"></i>
-        <span>교회 YouTube</span>
-        <span class="btn-en">Church YouTube</span>
-      </button>
-      <a class="link-btn" style="--ic:#facc15" href="https://bible.no1sms.kr/bible" target="_blank" rel="noopener">
-        <i class="ti ti-book"></i>
-        <span>성경</span>
-        <span class="btn-en">Bible</span>
-      </a>
-      <a class="link-btn" style="--ic:#f0abfc" href="https://bible.no1sms.kr/hymn" target="_blank" rel="noopener">
-        <i class="ti ti-music"></i>
-        <span>찬송</span>
-        <span class="btn-en">Hymnal</span>
-      </a>
-      <a class="link-btn" style="--ic:#fb7185" href="https://www.bethelpress.org/" target="_blank" rel="noopener">
-        <i class="ti ti-sunrise"></i>
-        <span>새벽 기도회 · 오늘의 양식</span>
-        <span class="btn-en">Bethel Press Daily Bread</span>
-      </a>
-      <a class="link-btn" style="--ic:#6ee7b7" href="https://glenwercpc-byte.github.io/Church-Calendar/" target="_blank" rel="noopener">
-        <i class="ti ti-calendar-event"></i>
-        <span>교회 연중 일정표</span>
-        <span class="btn-en">Church Annual Schedule</span>
-      </a>
-      <button class="link-btn" style="--ic:#fcd34d" onclick="openLinkPw('member')">
-        <i class="ti ti-users"></i>
-        <span>교인 명부</span>
-        <span class="btn-en">Member Directory</span>
-      </button>
-      <a class="link-btn" style="--ic:#c4b5fd" href="https://glenwercpc-byte.github.io/Cell-Group/" target="_blank" rel="noopener">
-        <i class="ti ti-sitemap"></i>
-        <span>샘터 조직표</span>
-        <span class="btn-en">Cell Group</span>
-      </a>
-      <a class="link-btn" style="--ic:#67e8f9" href="https://glenwercpc-byte.github.io/Dept-Report/" target="_blank" rel="noopener">
-        <i class="ti ti-report"></i>
-        <span>부서장 보고서</span>
-        <span class="btn-en">Dept. Report</span>
-      </a>
-      <button class="link-btn" style="--ic:#f9a8d4" onclick="openLinkPw('visit')">
-        <i class="ti ti-notebook"></i>
-        <span>교인 심방 일지</span>
-        <span class="btn-en">Pastoral Visitation</span>
-      </button>
-      <a class="link-btn" style="--ic:#4ade80" href="https://glenwercpc-byte.github.io/Weekly-Status/" target="_blank" rel="noopener">
-        <i class="ti ti-chart-bar"></i>
-        <span>주일 출석 현황</span>
-        <span class="btn-en">Weekly Attendance</span>
-      </a>
-      <a class="link-btn" style="--ic:#a3e635" href="https://glenwercpc-byte.github.io/Cemetery/" target="_blank" rel="noopener">
-        <i class="ti ti-home-heart"></i>
-        <span>교회 묘지 관리</span>
-        <span class="btn-en">Cemetery Management</span>
-      </a>
-    </div>
-
+    <span class="status" id="status"></span>
+    <button class="btn primary" id="saveBtn" type="button">저장</button>
   </div>
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" data-view="gigu" aria-selected="true">기구·위원회</button>
+    <button class="tab" role="tab" data-view="buseo" aria-selected="false">팀·부서</button>
+    <button class="tab" role="tab" data-view="org" aria-selected="false">교회 조직도</button>
+    <button class="tab" role="tab" data-view="hist" aria-selected="false">교회 연혁</button>
+    <button class="tab" role="tab" data-view="preview" aria-selected="false">미리보기·인쇄</button>
+  </nav>
+</header>
 
-  <!-- 암호 입력 모달 -->
-  <div class="pw-overlay" id="pwOverlay">
-    <div class="pw-modal">
-      <div class="pw-title"><i class="ti ti-lock"></i>관리자 로그인</div>
-      <input class="pw-input" id="pwInput" type="password" maxlength="6" placeholder="••••"
-             oninput="this.classList.remove('error'); document.getElementById('pwError').classList.remove('show')"
-             onkeydown="if(event.key==='Enter')checkPassword()" />
-      <div class="pw-error-msg" id="pwError">암호가 틀렸습니다</div>
-      <div class="pw-row">
-        <button class="pw-confirm-btn" onclick="checkPassword()">확인</button>
-        <button class="pw-cancel-btn" onclick="closePwModal()">취소</button>
+<main>
+  <div id="banner"></div>
+
+  <section id="view-gigu">
+    <div class="section-head">
+      <h2>기구·위원회</h2>
+      <p>직책이 없으면 직책 칸을 비워 두세요. 이름이 여러 명이면 쉼표로 구분합니다.</p>
+    </div>
+    <div id="giguList"></div>
+    <button class="btn add" type="button" data-act="addGigu">+ 기구·위원회 추가</button>
+  </section>
+
+  <section id="view-buseo" hidden>
+    <div class="section-head">
+      <h2>팀·부서</h2>
+      <p>새 부서는 바로 위 부서의 팀장·팀을 이어받습니다. 도서실·Praise Band 같은 소그룹은 '소그룹 추가'로 넣으세요.</p>
+    </div>
+    <div id="buseoList"></div>
+    <button class="btn add" type="button" data-act="addBuseo">+ 부서 추가</button>
+  </section>
+
+  <section id="view-org" hidden>
+    <div class="org-toolbar">
+      <div>
+        <h2>교회 조직도</h2>
+        <p>박스를 누르면 이름 수정·순서 이동·옆/하위 칸 추가·삭제를 할 수 있습니다. 점선 <b>+</b> 박스는 새 칸 추가입니다.<span class="org-hint-m" style="display:none">휴대폰에서는 조직도 전체가 한 화면에 보이며, 두 손가락으로 벌려 확대할 수 있습니다.</span></p>
+      </div>
+      <div class="org-actions">
+        <label class="switch"><input type="checkbox" id="editToggle" checked> 편집 모드</label>
+        <button class="btn" type="button" data-act="orgFromBuseo">부서조직표로 팀 채우기</button>
+        <button class="btn" type="button" id="orgPrintBtn">인쇄 / PDF</button>
       </div>
     </div>
-  </div>
+    <div class="sheet"><div class="chart-wrap" id="orgEdit"></div></div>
+  </section>
 
-  <script>
-    /* ── 상수 ── */
-    const ORG_URL = 'https://glenwercpc-byte.github.io/Org-Chart/';
-
-    const LINK_PW_CONFIG = {
-      member: {
-        pw: '1472',
-        url: 'https://glenwercpc-byte.github.io/member-register/',
-        title: '교인 명부',
-        desc: '암호를 입력해 주세요\n(사무실을 통해 확인)'
-      },
-      visit: {
-        pw: '1335',
-        url: 'https://glenwercpc-byte.github.io/Visit/',
-        title: '교인 심방 일지',
-        desc: '담임 목사 전용'
-      },
-      orgAdmin: {
-        pw: '4241',
-        url: null,
-        title: '관리모드',
-        desc: '조직표 관리자 암호를 입력해 주세요'
-      }
-    };
-
-    let currentLinkTarget = null;
-
-    /* ── 링크 암호 모달 ── */
-    function openLinkPw(target) {
-      currentLinkTarget = target;
-      const cfg = LINK_PW_CONFIG[target];
-      document.getElementById('linkPwTitle').innerHTML = '<i class="ti ti-lock"></i>' + cfg.title;
-      document.getElementById('linkPwDesc').innerText = cfg.desc;
-      document.getElementById('linkPwInput').value = '';
-      document.getElementById('linkPwInput').classList.remove('error');
-      document.getElementById('linkPwError').classList.remove('show');
-      document.getElementById('linkPwOverlay').classList.add('open');
-      setTimeout(() => document.getElementById('linkPwInput').focus(), 100);
-    }
-
-    function closeLinkPwModal() {
-      document.getElementById('linkPwOverlay').classList.remove('open');
-      currentLinkTarget = null;
-    }
-
-    function checkLinkPassword() {
-      const val = document.getElementById('linkPwInput').value;
-      const cfg = LINK_PW_CONFIG[currentLinkTarget];
-      if (val === cfg.pw) {
-        const target = currentLinkTarget;
-        closeLinkPwModal();
-        if (target === 'orgAdmin') {
-          openAdminIframe();
-        } else {
-          window.open(cfg.url, '_blank', 'noopener');
-        }
-      } else {
-        const input = document.getElementById('linkPwInput');
-        input.classList.add('error');
-        document.getElementById('linkPwError').classList.add('show');
-        input.value = '';
-        setTimeout(() => input.focus(), 100);
-      }
-    }
-
-    /* ── 히든 admin 버튼 (display:none) ── */
-    const ADMIN_PW = '1424';
-    let isAdmin = false;
-
-    function openAdminOrLogout() {
-      if (isAdmin) {
-        isAdmin = false;
-        document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('visible'));
-        const btn = document.getElementById('adminBtn');
-        btn.classList.remove('active');
-        btn.innerHTML = '<i class="ti ti-lock" style="font-size:10px;vertical-align:middle;margin-right:3px;"></i>admin';
-      } else {
-        openPwModal();
-      }
-    }
-
-    function openPwModal() {
-      document.getElementById('pwInput').value = '';
-      document.getElementById('pwInput').classList.remove('error');
-      document.getElementById('pwError').classList.remove('show');
-      document.getElementById('pwOverlay').classList.add('open');
-      setTimeout(() => document.getElementById('pwInput').focus(), 100);
-    }
-
-    function closePwModal() {
-      document.getElementById('pwOverlay').classList.remove('open');
-    }
-
-    function checkPassword() {
-      const val = document.getElementById('pwInput').value;
-      if (val === ADMIN_PW) {
-        isAdmin = true;
-        document.querySelectorAll('.admin-only').forEach(el => el.classList.add('visible'));
-        const btn = document.getElementById('adminBtn');
-        btn.classList.add('active');
-        btn.innerHTML = '<i class="ti ti-lock-open" style="font-size:10px;vertical-align:middle;margin-right:3px;"></i>admin ✓';
-        closePwModal();
-      } else {
-        const input = document.getElementById('pwInput');
-        input.classList.add('error');
-        document.getElementById('pwError').classList.add('show');
-        input.value = '';
-        setTimeout(() => input.focus(), 100);
-      }
-    }
-
-    /* ── 조직표 모달 ── */
-    function closeOrgModal() {
-      document.getElementById('orgOverlay').classList.remove('open');
-    }
-
-    function openOrgAdminPw() {
-      closeOrgModal();
-      openLinkPw('orgAdmin');
-    }
-
-    /* ── iframe 공통 유틸 ── */
-    function openOrgIframe(isViewMode) {
-      const frame = document.getElementById('orgFrame');
-      const titleEl = document.getElementById('iframeTopbarTitle');
-
-      if (isViewMode) {
-        titleEl.innerHTML = '<i class="ti ti-eye"></i>&nbsp;교회 부서 조직표 · 2026년 (조회모드)';
-      } else {
-        titleEl.innerHTML = '<i class="ti ti-sitemap"></i>&nbsp;교회 부서 조직표 · 2026년';
-      }
-
-      frame.src = ORG_URL;
-      document.getElementById('iframeOverlay').classList.add('open');
-
-      frame.onload = function () {
-        try {
-          const doc = frame.contentDocument || frame.contentWindow.document;
-          const win = frame.contentWindow;
-
-          /* ── 모바일 뷰포트: 전체 축소 후 핀치 줌 허용 ── */
-          // 1) 조직표 앱의 viewport 메타를 핀치 줌 허용으로 교체
-          let vp = doc.querySelector('meta[name="viewport"]');
-          if (!vp) { vp = doc.createElement('meta'); vp.name = 'viewport'; doc.head.appendChild(vp); }
-          vp.content = 'width=device-width, initial-scale=0.6, minimum-scale=0.3, maximum-scale=4, user-scalable=yes';
-
-          // 2) 모바일 전용 CSS 주입
-          const mobileStyle = doc.createElement('style');
-          mobileStyle.textContent = `
-            /* 모바일: 전체를 화면에 맞게 축소, 핀치 줌으로 확대 가능 */
-            @media (max-width: 768px) {
-              html { touch-action: pan-x pan-y pinch-zoom; }
-              body { min-width: 0 !important; overflow-x: auto; }
-              main { padding: 8px !important; }
-              .sheet { padding: 10px 6px !important; overflow-x: auto; }
-              table.org { font-size: 11px !important; min-width: 480px !important; }
-              table.org th, table.org td { padding: 4px 5px !important; }
-              .sheet h1 { font-size: 16px !important; margin-bottom: 10px !important; }
-              .chart { font-size: 11px !important; min-width: 700px !important; }
-              .preview-tools { flex-wrap: wrap; gap: 6px !important; }
-              .seg button { font-size: 12px !important; padding: 6px 10px !important; }
-            }
-          `;
-          doc.head.appendChild(mobileStyle);
-
-          if (isViewMode) {
-            /* 조회모드: 불필요 요소 숨김 */
-            const style = doc.createElement('style');
-            style.textContent = `
-              nav.tabs                          { display: none !important; }
-              #yearSel, #newYearBtn, #saveBtn,
-              #status                           { display: none !important; }
-              #view-gigu, #view-buseo,
-              #view-org                         { display: none !important; }
-              .preview-tools .btn               { display: none !important; }
-              #orgPrintBtn                      { display: none !important; }
-              #view-preview                     { display: block !important; }
-              #view-preview[hidden]             { display: block !important; }
-            `;
-            doc.head.appendChild(style);
-          }
-
-          /* 미리보기 탭 클릭 */
-          doc.querySelectorAll('button.tab[data-view]').forEach(t => {
-            if (t.getAttribute('data-view') === 'preview') t.click();
-          });
-
-          /* 부서조직표 선택 */
-          setTimeout(() => {
-            doc.querySelectorAll('[data-pv]').forEach(b => {
-              if (b.getAttribute('data-pv') === 'table') b.click();
-            });
-          }, 400);
-
-        } catch (e) {
-          console.warn('Org-Chart iframe DOM 접근 실패:', e);
-        }
-      };
-    }
-
-    /* 조회모드 진입 */
-    function openViewMode() {
-      closeOrgModal();
-      openOrgIframe(true);
-    }
-
-    /* 관리모드 진입 (암호 확인 후) */
-    function openAdminIframe() {
-      openOrgIframe(false);
-    }
-
-    function closeIframeOverlay() {
-      document.getElementById('iframeOverlay').classList.remove('open');
-      document.getElementById('orgFrame').src = '';
-    }
-  </script>
-
-  <!-- 링크 전용 암호 모달 -->
-  <div class="pw-overlay" id="linkPwOverlay">
-    <div class="pw-modal">
-      <div class="pw-title" id="linkPwTitle"><i class="ti ti-lock"></i>암호를 입력해 주세요</div>
-      <div id="linkPwDesc" style="font-size:12px;color:rgba(180,210,255,0.65);text-align:center;line-height:1.6;"></div>
-      <input class="pw-input" id="linkPwInput" type="password" maxlength="6" placeholder="••••"
-             oninput="this.classList.remove('error'); document.getElementById('linkPwError').classList.remove('show')"
-             onkeydown="if(event.key==='Enter')checkLinkPassword()" />
-      <div class="pw-error-msg" id="linkPwError">암호가 틀렸습니다</div>
-      <div class="pw-row">
-        <button class="pw-confirm-btn" onclick="checkLinkPassword()">확인</button>
-        <button class="pw-cancel-btn" onclick="closeLinkPwModal()">취소</button>
+  <section id="view-hist" hidden>
+    <div class="org-toolbar">
+      <div>
+        <h2>교회 연혁</h2>
+        <p>항목을 누르면 수정할 수 있습니다. 바꾼 내용은 위쪽 [저장] 버튼으로 저장합니다.</p>
+      </div>
+      <div class="org-actions">
+        <button class="btn" type="button" data-ha="addNew">+ 새 항목</button>
       </div>
     </div>
-  </div>
-
-  <!-- 조직표 모드 선택 오버레이 -->
-  <div class="org-overlay" id="orgOverlay" onclick="if(event.target===this)closeOrgModal()">
-    <div class="org-modal">
-      <div class="org-modal-title">교회 부서 조직표</div>
-      <p class="org-modal-sub">모드를 선택해 주세요</p>
-      <div class="org-btn-row">
-        <button class="org-mode-btn view-mode" onclick="openViewMode()">
-          <i class="ti ti-eye"></i>
-          조회모드
-          <span class="org-btn-sub">View Only</span>
-        </button>
-        <button class="org-mode-btn admin-mode" onclick="openOrgAdminPw()">
-          <i class="ti ti-settings"></i>
-          관리모드
-          <span class="org-btn-sub">Admin</span>
-        </button>
-      </div>
-      <button class="org-close-btn" onclick="closeOrgModal()">✕ 닫기</button>
+    <div class="hist-tools">
+      <input class="inp" id="histQ" type="search" placeholder="검색 (예: 부임, 선교, 성전)">
+      <label class="switch"><input type="checkbox" id="histDesc"> 최신순</label>
     </div>
-  </div>
+    <div class="chips" id="histChips"></div>
+    <div class="hist-info" id="histInfo"></div>
+    <div id="histList"></div>
+  </section>
 
-  <!-- 조회모드 iframe 오버레이 -->
-  <div class="iframe-overlay" id="iframeOverlay">
-    <div class="iframe-topbar">
-      <div class="iframe-topbar-title" id="iframeTopbarTitle">
-        <i class="ti ti-sitemap"></i>
-        교회 부서 조직표 · 2026년
+  <section id="view-preview" hidden>
+    <div class="preview-tools">
+      <div class="seg" role="group" aria-label="미리보기 종류">
+        <button type="button" data-pv="table" aria-pressed="true">부서조직표</button>
+        <button type="button" data-pv="org" aria-pressed="false">교회 조직도</button>
+        <button type="button" data-pv="hist" aria-pressed="false">교회 연혁</button>
       </div>
-      <button class="iframe-close-btn" onclick="closeIframeOverlay()">✕ 닫기</button>
+      <button class="btn" type="button" onclick="window.print()">인쇄 / PDF 저장</button>
     </div>
-    <iframe class="iframe-frame" id="orgFrame" src=""
-            allow="same-origin"
-            style="touch-action: pan-x pan-y pinch-zoom; -webkit-overflow-scrolling: touch;"></iframe>
-  </div>
+    <div class="sheet" id="sheet"></div>
+    <div class="sheet print-org" id="orgSheet" hidden><div class="chart-wrap" id="orgChart"></div></div>
+    <div class="sheet" id="histSheet" hidden></div>
+  </section>
+</main>
 
-  <!-- YouTube 서브메뉴 오버레이 -->
-  <div class="yt-overlay" id="ytOverlay" onclick="if(event.target===this)this.classList.remove('open')">
-    <div class="yt-modal">
-      <div class="yt-modal-title">
-        <i class="ti ti-brand-youtube"></i>교회 YouTube
-      </div>
-      <div class="yt-menu-list">
-        <a class="yt-menu-btn" style="--mc:#ef4444" href="https://www.youtube.com/@ccpc-media/streams" target="_blank" rel="noopener">
-          <i class="ti ti-live-photo"></i>라이브
-          <span class="badge-live">LIVE</span>
-        </a>
-        <a class="yt-menu-btn" style="--mc:#fbbf24" href="https://www.youtube.com/watch?v=NKUbQFQGhSI&list=PLnDGOld8zPN4a5MBa8RvV1mukDkQomQ0r" target="_blank" rel="noopener">
-          <i class="ti ti-building-church"></i>주일 2부 본예배
-        </a>
-        <a class="yt-menu-btn" style="--mc:#fb923c" href="https://www.youtube.com/watch?v=CxBNnXWE_XU&list=PLnDGOld8zPN6ekDMX5GoNEFHZr9q0TkHK" target="_blank" rel="noopener">
-          <i class="ti ti-building-church"></i>주일 3부 예배
-        </a>
-        <a class="yt-menu-btn" style="--mc:#34d399" href="https://www.youtube.com/watch?v=VsDNW-N3vIs&list=PLnDGOld8zPN4uZeF1hUtG4wEv4ZIwmG3z" target="_blank" rel="noopener">
-          <i class="ti ti-moon"></i>금요기도회
-        </a>
-        <a class="yt-menu-btn" style="--mc:#60a5fa" href="https://www.youtube.com/watch?v=O4fIL3kYSm4&list=PLnDGOld8zPN7aLu3O8L8IvPMxlaSPf8j2" target="_blank" rel="noopener">
-          <i class="ti ti-sunrise"></i>새벽기도회
-        </a>
-        <a class="yt-menu-btn" style="--mc:#22d3ee" href="https://www.youtube.com/watch?v=AwO-nOIQOqQ&list=PLnDGOld8zPN70t4SQ2AIy9AD7mZqozOBF" target="_blank" rel="noopener">
-          <i class="ti ti-school"></i>EM Sunday Worship Service
-        </a>
-        <a class="yt-menu-btn" style="--mc:#c084fc" href="https://www.youtube.com/@ccpc-media/shorts" target="_blank" rel="noopener">
-          <i class="ti ti-device-mobile"></i>Shorts
-        </a>
-      </div>
-      <button class="yt-close-btn" onclick="document.getElementById('ytOverlay').classList.remove('open')">✕ 닫기</button>
+
+<!-- 새 연도 -->
+<div class="modal-bg" id="yearModal">
+  <form class="modal" id="yearForm">
+    <h3>새 연도 만들기</h3>
+    <p>기존 연도의 조직을 복사해서 시작합니다. 바뀐 직책과 이름만 고친 뒤 저장하세요.</p>
+    <div class="grid">
+      <div><label class="f" for="newYearInput">새 연도</label><input class="inp" type="number" id="newYearInput" min="2000" max="2100"></div>
+      <div><label class="f" for="srcYearSel">복사할 연도</label><select class="inp" id="srcYearSel"></select></div>
     </div>
-  </div>
+    <div class="err" id="yearErr"></div>
+    <div class="modal-actions">
+      <button class="btn" type="button" data-close="yearModal">취소</button>
+      <button class="btn primary" type="submit">만들기</button>
+    </div>
+  </form>
+</div>
+
+<div class="loading" id="loading">불러오는 중…</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================================================================
+   설정: Apps Script 웹 앱 URL (배포 후 받은 주소를 붙여넣기)
+   비워 두면 2026년 예시 데이터로 '데모 모드'로 동작합니다.
+   ================================================================ */
+const API_URL = 'https://script.google.com/macros/s/AKfycbxZ1UYOx38_zxAKRetkv52xkTR1kllmVj0Fpc8TPOrq5QSdSduII4Efx1Fll1eDhfw_/exec';
+
+const DEMO = {
+  2026: {
+    gigu: [
+      { name: '공동의회', roles: [{ title: '의장(당회장)', names: '김윤민 목사' }, { title: '서기(당회 서기)', names: '윤자명 장로' }] },
+      { name: '당회', roles: [{ title: '당회장', names: '김윤민' }, { title: '시무장로', names: '윤자명, 이윤종, 황광연' }] },
+      { name: '목회실', roles: [{ title: '', names: '김윤민, 이신민, Sean Kim, 김병림' }] },
+      { name: '법인 이사회 (CCPC Inc.)', roles: [{ title: '이사장', names: '윤자명' }, { title: '서기', names: '윤자명' }, { title: '재정', names: '이윤종' }, { title: '이사', names: '황광연' }] },
+      { name: '예결산 위원회', roles: [{ title: '', names: '시무장로, 총무부장, 재정부장' }] },
+      { name: '장례 위원회', roles: [{ title: '위원장', names: '임덕근' }, { title: '위원', names: '김귀남, 김미화, 김정한, 이미자, 최은경' }] },
+      { name: '감사', roles: [{ title: '', names: '권효섭' }] },
+      { name: '노회 총대', roles: [{ title: '', names: '권효섭, 윤자명, 이윤종, 임채석, 황광연' }] }
+    ],
+    buseo: [
+      { leader: '윤자명', team: '총무', dept: '총무부', head: '설창욱', members: '윤민자, 이숙자, 최은경, 하재원', groups: [{ label: '도서실', names: '최대식, 김영숙' }, { label: '웹팀', names: '김정오' }] },
+      { leader: '윤자명', team: '총무', dept: '교우부', head: '송영심', members: '김숙인, 이미자, 이숙화, 최옥현, 최은경' },
+      { leader: '윤자명', team: '총무', dept: '새가족부', head: '황명숙', members: '김창화, 김정숙, 박그레이스, 윤민자, 이경례, 이숙자, 채경주, 황은주, 김동진' },
+      { leader: '윤자명', team: '총무', dept: '장학부', head: '하재원', members: '이진방' },
+      { leader: '황광연', team: '예배', dept: '예배부', head: '임계원', members: '김귀남, 김미영, 김수진, 김창화, 심윤문, 윤순희, 허명희, 황명숙, 황은주', note: '원본에 형광펜 표시됨' },
+      { leader: '황광연', team: '예배', dept: '방송부', head: '김정오', members: '김태봉, 노동기' },
+      { leader: '황광연', team: '찬양', dept: '찬양부', head: '이경희', members: '고영옥, 고유심, 김명심, 김순영, 김옥경, 김희숙, 박그레이스, 박순길, 백해나, 서연실, 이경자, 이은령, 이의정, 이인옥, 이현순, 강상수, 김병식, 김영식, 김요한, 김정오, 윤준용, 이규호', groups: [{ label: '', names: '(김정아, 박신영)' }, { label: 'Praise Band', names: '김성은, 김인중, 박지원, 신예송, 하경원' }] },
+      { leader: '목회실', team: '장년 교육', dept: '장년교육부', head: '채경주', members: '이숙자, 이은령, 허명희' },
+      { leader: '김수진', team: '학교 교육', dept: '유치/유년부' },
+      { leader: '김수진', team: '학교 교육', dept: '중고등부' },
+      { leader: '이신민', team: '청년', dept: '청년부', members: '김인중, 신예송, 윤율, 김성은, 박지원, 하경원' },
+      { leader: '송정은', team: '선교', dept: '국내 선교부', head: '김미경', members: '김부웅, 고영옥, 김영자, 박순길, 백남이, 이춘강, 이혜숙, 한지영, 임덕근, 이인석, 심윤문, 김정오, 윤율', note: '원본에서 국내·해외 선교부 부원 칸이 합쳐져 있음' },
+      { leader: '송정은', team: '선교', dept: '해외 선교부', head: '허명희' },
+      { leader: '심윤문', team: '관리', dept: '관리부', members: '김귀남' },
+      { leader: '이윤종', team: '재정', dept: '재정부', head: '서인호', members: '김미영, 김미경, 권정희, 박애경' },
+      { leader: '심은영', team: '봉사, 친교', dept: '봉사' },
+      { leader: '심은영', team: '봉사, 친교', dept: '친교' }
+    ]
+  }
+};
+
+const n = (name, children) => ({ name, children: children || [] });
+const L = (...names) => names.map((x) => (typeof x === 'string' ? n(x) : x));
+DEMO[2026].org = {
+  top: L('공동의회', '당회'),
+  left: L('법인 이사회', '예결산 위원회', '공천 위원회'),
+  right: [n('목회실', L('EM (영어예배)', '장년 교육부')), n('감사')],
+  teams: [
+    n('총무팀', [n('총무부', L('도서실', '웹팀')), n('교우부'), n('새가족부'), n('장학부')]),
+    n('예배팀', [n('예배부'), n('찬양부', L('글로리아 찬양대', "Heaven's Echo Praise Band")), n('방송부')]),
+    n('재정팀', L('재정부')),
+    n('학교교육팀', L('청년부', '중고등부', '유년유치부')),
+    n('관리팀', L('관리부')),
+    n('선교팀', L('국내선교부', '해외선교부')),
+    n('봉사팀', L('봉사부')),
+    n('장례위원회')
+  ],
+  bottom: L('제직부서장회의', '권사회', '9 선교회', '4 지구 12 샘터')
+};
+const ORG_ZONES = [
+  { key: 'top', title: '최상위 (가운데 위)', hint: '위에서 아래 순서 — 예: 공동의회, 당회', depth: 1 },
+  { key: 'left', title: '왼쪽 기구', hint: '당회 왼쪽에 붙는 칸 — 예: 법인 이사회, 위원회', depth: 2 },
+  { key: 'right', title: '오른쪽 기구', hint: '당회 오른쪽 — 하위 칸은 옆에 묶여 표시 (예: 목회실 → EM)', depth: 2 },
+  { key: 'teams', title: '팀', hint: '팀 → 부서 → 소그룹 3단계. 앞쪽 절반은 가운데 줄 왼쪽, 나머지는 오른쪽에 그려집니다.', depth: 3 },
+  { key: 'bottom', title: '아래 줄', hint: '맨 아래 가로로 놓이는 칸 — 예: 권사회, 선교회', depth: 1 }
+];
+const emptyOrg = () => ({ top: [], left: [], right: [], teams: [], bottom: [] });
+
+const state = { year: null, years: [], gigu: [], buseo: [], org: emptyOrg(), dirty: false, view: 'gigu', pv: 'table', hist: [], histDirty: false, histLoaded: false };
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+
+/* ---------- 데이터 정규화 ---------- */
+function normGigu(list) {
+  return (list || []).map((g) => ({
+    name: g.name || '',
+    roles: (g.roles && g.roles.length ? g.roles : [{}]).map((r) => ({ title: r.title || '', names: r.names || '', note: r.note || '' }))
+  }));
+}
+function normBuseo(list) {
+  return (list || []).map((d) => ({
+    leader: d.leader || '', team: d.team || '', dept: d.dept || '', head: d.head || '',
+    members: d.members || '', note: d.note || '',
+    groups: (d.groups || []).map((g) => ({ label: g.label || '', names: g.names || '' }))
+  }));
+}
+const clone = (o) => JSON.parse(JSON.stringify(o));
+function normNodes(list, depth) {
+  return (list || []).map((x) => ({ name: x.name || '', children: depth > 1 ? normNodes(x.children, depth - 1) : [] }));
+}
+function normOrg(o) {
+  const out = emptyOrg();
+  ORG_ZONES.forEach((z) => { out[z.key] = normNodes(o && o[z.key], z.depth); });
+  return out;
+}
+
+function cleanNames(s) {
+  return String(s || '')
+    .replace(/[，、]/g, ',')
+    .split(/\s*,\s*|\n+/)
+    .map((x) => x.trim())
+    .filter(Boolean)
+    .join(', ');
+}
+function countNames(s) {
+  const t = String(s || '').replace(/[()]/g, '');
+  return t.trim() ? t.split(',').filter((x) => x.trim()).length : 0;
+}
+
+/* ---------- API ---------- */
+function jsonp(params) {
+  return new Promise((resolve, reject) => {
+    const cb = '__orgcb_' + Date.now() + '_' + Math.floor(Math.random() * 1e6);
+    const qs = new URLSearchParams({ ...params, callback: cb, _: Date.now() }).toString();
+    const s = document.createElement('script');
+    const timer = setTimeout(() => { cleanup(); reject(new Error('서버 응답이 없습니다.')); }, 25000);
+    function cleanup() { clearTimeout(timer); delete window[cb]; s.remove(); }
+    window[cb] = (data) => { cleanup(); data && data.ok ? resolve(data) : reject(new Error((data && data.error) || '불러오기 실패')); };
+    s.onerror = () => { cleanup(); reject(new Error('서버에 연결할 수 없습니다.')); };
+    s.src = API_URL + (API_URL.includes('?') ? '&' : '?') + qs;
+    document.body.appendChild(s);
+  });
+}
+async function post(body) {
+  const res = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) });
+  const data = await res.json();
+  if (!data.ok) throw new Error(data.error || '저장 실패');
+  return data;
+}
+
+async function apiLoad(year) {
+  if (!API_URL) {
+    const d = DEMO[year] || { gigu: [], buseo: [] };
+    return { year, years: Object.keys(DEMO).map(Number).sort((a, b) => b - a), gigu: clone(d.gigu), buseo: clone(d.buseo), org: clone(d.org || emptyOrg()) };
+  }
+  return jsonp({ action: 'load', year });
+}
+async function apiYears() {
+  if (!API_URL) return { years: Object.keys(DEMO).map(Number).sort((a, b) => b - a) };
+  return jsonp({ action: 'years' });
+}
+async function apiSave() {
+  const payload = { action: 'save', year: state.year, gigu: state.gigu, buseo: state.buseo, org: state.org };
+  if (!API_URL) {
+    DEMO[state.year] = clone({ gigu: state.gigu, buseo: state.buseo, org: state.org });
+    await new Promise((r) => setTimeout(r, 300));
+    return { ok: true, years: Object.keys(DEMO).map(Number).sort((a, b) => b - a) };
+  }
+  return post(payload);
+}
+
+/* ---------- 화면 공통 ---------- */
+function setLoading(on, msg) { $('loading').textContent = msg || '불러오는 중…'; $('loading').classList.toggle('on', on); }
+let toastTimer;
+function toast(msg, isErr) {
+  const t = $('toast'); t.textContent = msg; t.className = 'toast show' + (isErr ? ' error' : '');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => (t.className = 'toast'), 2600);
+}
+function setDirty(v) { state.dirty = v; updateStatus(); }
+function setHistDirty(v) { state.histDirty = v; updateStatus(); }
+function updateStatus() {
+  const d = state.dirty || state.histDirty;
+  const s = $('status');
+  s.textContent = d ? '● 저장 안 됨' : '';
+  s.classList.toggle('dirty', d);
+}
+function showBanner() {
+  const b = $('banner');
+  b.innerHTML = API_URL ? '' : '<div class="banner"><b>데모 모드</b> — API_URL 이 비어 있어 예시 데이터로 동작합니다. 저장해도 구글 시트에는 기록되지 않습니다.</div>';
+}
+function renderYears() {
+  const ys = [...new Set([...state.years, state.year].filter(Boolean))].sort((a, b) => b - a);
+  state.years = ys;
+  $('yearSel').innerHTML = ys.map((y) => `<option value="${y}" ${y === state.year ? 'selected' : ''}>${y}년</option>`).join('');
+}
+
+/* ---------- 기구 렌더 ---------- */
+function renderGigu() {
+  const n = state.gigu.length;
+  $('giguList').innerHTML = n ? state.gigu.map((g, i) => `
+    <div class="card">
+      <div class="card-head">
+        <span class="num">${i + 1}</span>
+        <input class="title" data-k="gigu.${i}.name" value="${esc(g.name)}" placeholder="기구·위원회 이름 (예: 당회)">
+        <div class="card-tools">
+          <button class="icon-btn" type="button" title="위로" data-act="move" data-list="gigu" data-i="${i}" data-d="-1" ${i === 0 ? 'disabled' : ''}>▲</button>
+          <button class="icon-btn" type="button" title="아래로" data-act="move" data-list="gigu" data-i="${i}" data-d="1" ${i === n - 1 ? 'disabled' : ''}>▼</button>
+          <button class="icon-btn del" type="button" title="삭제" data-act="delCard" data-list="gigu" data-i="${i}">✕</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row-labels"><span>직책</span><span>이름</span><span>비고</span><span></span></div>
+        <div class="rows">
+          ${g.roles.map((r, j) => `
+          <div class="row">
+            <input class="inp" data-k="gigu.${i}.roles.${j}.title" value="${esc(r.title)}" placeholder="직책 (없으면 비움)">
+            <textarea class="inp" rows="1" data-k="gigu.${i}.roles.${j}.names" data-names placeholder="이름 (쉼표로 구분)">${esc(r.names)}</textarea>
+            <input class="inp" data-k="gigu.${i}.roles.${j}.note" value="${esc(r.note)}" placeholder="비고">
+            <button class="icon-btn del" type="button" title="이 직책 삭제" data-act="delRole" data-i="${i}" data-j="${j}">✕</button>
+          </div>`).join('')}
+        </div>
+        <button class="mini-add" type="button" data-act="addRole" data-i="${i}">+ 직책 추가</button>
+      </div>
+    </div>`).join('') : '<div class="card"><div class="empty">아직 기구·위원회가 없습니다.</div></div>';
+  autoGrowAll($('giguList'));
+}
+
+/* ---------- 부서 렌더 ---------- */
+function renderBuseo() {
+  const n = state.buseo.length;
+  $('buseoList').innerHTML = n ? state.buseo.map((d, i) => `
+    <div class="card">
+      <div class="card-head">
+        <span class="num">${i + 1}</span>
+        <input class="title" data-k="buseo.${i}.dept" value="${esc(d.dept)}" placeholder="부서 이름 (예: 총무부)">
+        ${d.team ? `<span class="team-tag">${esc(d.team)}</span>` : ''}
+        <div class="card-tools">
+          <button class="icon-btn" type="button" title="위로" data-act="move" data-list="buseo" data-i="${i}" data-d="-1" ${i === 0 ? 'disabled' : ''}>▲</button>
+          <button class="icon-btn" type="button" title="아래로" data-act="move" data-list="buseo" data-i="${i}" data-d="1" ${i === n - 1 ? 'disabled' : ''}>▼</button>
+          <button class="icon-btn del" type="button" title="삭제" data-act="delCard" data-list="buseo" data-i="${i}">✕</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="grid c4">
+          <div><label class="f">팀장</label><input class="inp" data-k="buseo.${i}.leader" value="${esc(d.leader)}"></div>
+          <div><label class="f">팀</label><input class="inp" data-k="buseo.${i}.team" data-rerender value="${esc(d.team)}"></div>
+          <div><label class="f">부장</label><input class="inp" data-k="buseo.${i}.head" value="${esc(d.head)}"></div>
+          <div><label class="f">비고</label><input class="inp" data-k="buseo.${i}.note" value="${esc(d.note)}"></div>
+        </div>
+        <div style="margin-top:10px">
+          <label class="f">부원 <span class="count" data-count="buseo.${i}.members">${countNames(d.members)}명</span></label>
+          <textarea class="inp" rows="2" data-k="buseo.${i}.members" data-names placeholder="이름 (쉼표로 구분)">${esc(d.members)}</textarea>
+        </div>
+        ${d.groups.length ? `
+        <div class="sub">
+          <div class="sub-title">소그룹</div>
+          <div class="row-labels grp"><span>구분 (비워도 됨)</span><span>이름</span><span></span></div>
+          <div class="rows">
+            ${d.groups.map((g, j) => `
+            <div class="row grp">
+              <input class="inp" data-k="buseo.${i}.groups.${j}.label" value="${esc(g.label)}" placeholder="예: 도서실">
+              <textarea class="inp" rows="1" data-k="buseo.${i}.groups.${j}.names" data-names placeholder="이름 (쉼표로 구분)">${esc(g.names)}</textarea>
+              <button class="icon-btn del" type="button" title="소그룹 삭제" data-act="delGroup" data-i="${i}" data-j="${j}">✕</button>
+            </div>`).join('')}
+          </div>
+        </div>` : ''}
+        <button class="mini-add" type="button" data-act="addGroup" data-i="${i}">+ 소그룹 추가</button>
+      </div>
+    </div>`).join('') : '<div class="card"><div class="empty">아직 부서가 없습니다.</div></div>';
+  autoGrowAll($('buseoList'));
+}
+
+/* ---------- 미리보기 (원본 조직표 모양) ---------- */
+function joinRoles(g) {
+  return g.roles.filter((r) => r.title || r.names).map((r) => (r.title ? `${r.title}: ${r.names}` : r.names)).join(',   ');
+}
+function memberText(d) {
+  const lines = [];
+  if (d.members) lines.push(d.members);
+  d.groups.forEach((g) => { if (g.label || g.names) lines.push(g.label ? `${g.label}: ${g.names}` : g.names); });
+  return lines.join('\n');
+}
+function renderPreview() {
+  $('sheet').hidden = state.pv !== 'table';
+  $('orgSheet').hidden = state.pv !== 'org';
+  $('histSheet').hidden = state.pv !== 'hist';
+  $('pageStyle').textContent = state.pv === 'org' ? '@page { size: letter portrait; margin: 8mm; }' : '@page { size: letter portrait; margin: 12mm; }';
+  document.querySelectorAll('[data-pv]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.pv === state.pv)));
+  if (state.pv === 'org') { renderChart($('orgChart'), false); return; }
+  if (state.pv === 'hist') { renderHistDoc(); return; }
+  const gigu = state.gigu.filter((g) => g.name.trim());
+  const buseo = state.buseo.filter((d) => d.dept.trim());
+  if (!gigu.length && !buseo.length) { $('sheet').innerHTML = '<div class="empty">입력된 내용이 없습니다.</div>'; return; }
+
+  // 팀장/팀 셀 병합 계산 (연속된 같은 팀장, 그 안에서 연속된 같은 팀)
+  const leaderSpan = new Array(buseo.length).fill(0), teamSpan = new Array(buseo.length).fill(0);
+  for (let i = 0; i < buseo.length;) {
+    let j = i; while (j + 1 < buseo.length && buseo[j + 1].leader === buseo[i].leader) j++;
+    leaderSpan[i] = j - i + 1;
+    for (let k = i; k <= j;) {
+      let m = k; while (m + 1 <= j && buseo[m + 1].team === buseo[k].team) m++;
+      teamSpan[k] = m - k + 1; k = m + 1;
+    }
+    i = j + 1;
+  }
+
+  let html = `<h1>${state.year}년 부서조직</h1><table class="org">
+    <colgroup><col style="width:12%"><col style="width:12%"><col style="width:13%"><col style="width:11%"><col></colgroup><tbody>`;
+  gigu.forEach((g) => { html += `<tr><th colspan="2">${esc(g.name)}</th><td colspan="3">${esc(joinRoles(g))}</td></tr>`; });
+  if (buseo.length) {
+    html += '<tr class="hdr"><th>팀장</th><th>팀</th><th>부서</th><th>부장</th><th>부 원</th></tr>';
+    buseo.forEach((d, i) => {
+      html += '<tr>';
+      if (leaderSpan[i]) html += `<td class="c" rowspan="${leaderSpan[i]}">${esc(d.leader)}</td>`;
+      if (teamSpan[i]) html += `<td class="c" rowspan="${teamSpan[i]}">${esc(d.team)}</td>`;
+      html += `<td class="c">${esc(d.dept)}</td><td class="c">${esc(d.head)}</td><td class="m">${esc(memberText(d))}</td></tr>`;
+    });
+  }
+  $('sheet').innerHTML = html + '</tbody></table>';
+}
+
+function renderAll() {
+  renderYears(); renderGigu(); renderBuseo();
+  if (state.view === 'org') renderOrgEdit();
+  if (state.view === 'preview') renderPreview();
+}
+
+/* ---------- 입력 처리 ---------- */
+function setPath(path, value) {
+  const keys = path.split('.');
+  let o = state;
+  for (let i = 0; i < keys.length - 1; i++) o = o[keys[i]];
+  o[keys[keys.length - 1]] = value;
+}
+function autoGrow(el) { if (el.tagName === 'TEXTAREA') { el.style.height = 'auto'; el.style.height = el.scrollHeight + 2 + 'px'; } }
+function autoGrowAll(root) { root.querySelectorAll('textarea').forEach(autoGrow); }
+
+document.addEventListener('input', (e) => {
+  const el = e.target;
+  if (!el.dataset || !el.dataset.k) return;
+  setPath(el.dataset.k, el.value);
+  autoGrow(el);
+  const c = document.querySelector(`[data-count="${el.dataset.k}"]`);
+  if (c) c.textContent = countNames(el.value) + '명';
+  setDirty(true);
+});
+document.addEventListener('change', (e) => {
+  const el = e.target;
+  if (!el.dataset || !el.dataset.k) return;
+  if ('names' in el.dataset) {
+    const v = cleanNames(el.value);
+    if (v !== el.value) { el.value = v; setPath(el.dataset.k, v); autoGrow(el); }
+  } else {
+    el.value = el.value.trim(); setPath(el.dataset.k, el.value);
+  }
+  if ('rerender' in el.dataset) renderBuseo();
+});
+
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-act]');
+  if (!b) return;
+  const i = Number(b.dataset.i), j = Number(b.dataset.j);
+  switch (b.dataset.act) {
+    case 'addGigu':
+      state.gigu.push({ name: '', roles: [{ title: '', names: '', note: '' }] });
+      renderGigu(); focusLast('giguList'); break;
+    case 'addRole':
+      state.gigu[i].roles.push({ title: '', names: '', note: '' }); renderGigu(); break;
+    case 'delRole':
+      state.gigu[i].roles.splice(j, 1);
+      if (!state.gigu[i].roles.length) state.gigu[i].roles.push({ title: '', names: '', note: '' });
+      renderGigu(); break;
+    case 'addBuseo': {
+      const prev = state.buseo[state.buseo.length - 1];
+      state.buseo.push({ leader: prev ? prev.leader : '', team: prev ? prev.team : '', dept: '', head: '', members: '', note: '', groups: [] });
+      renderBuseo(); focusLast('buseoList'); break;
+    }
+    case 'addGroup':
+      state.buseo[i].groups.push({ label: '', names: '' }); renderBuseo(); break;
+    case 'delGroup':
+      state.buseo[i].groups.splice(j, 1); renderBuseo(); break;
+    case 'move': {
+      const list = state[b.dataset.list], d = Number(b.dataset.d), k = i + d;
+      if (k < 0 || k >= list.length) return;
+      [list[i], list[k]] = [list[k], list[i]];
+      b.dataset.list === 'gigu' ? renderGigu() : renderBuseo(); break;
+    }
+    case 'delCard': {
+      const list = state[b.dataset.list], item = list[i];
+      const label = b.dataset.list === 'gigu' ? (item.name || '이 기구') : (item.dept || '이 부서');
+      if (!confirm(`'${label}' 을(를) 삭제할까요?`)) return;
+      list.splice(i, 1);
+      b.dataset.list === 'gigu' ? renderGigu() : renderBuseo(); break;
+    }
+    case 'orgFromBuseo': {
+      if (!state.buseo.length) { toast('부서 정보가 없습니다.', true); return; }
+      if (state.org.teams.length && !confirm('지금 입력된 팀 목록을 부서조직표의 팀·부서로 바꿀까요?')) return;
+      state.org.teams = teamsFromBuseo(); renderOrgEdit(); toast('팀·부서를 가져왔습니다. 조직도에 맞게 고쳐 주세요.'); break;
+    }
+    default: return;
+  }
+  setDirty(true);
+});
+document.querySelectorAll('[data-pv]').forEach((b) => b.addEventListener('click', () => { state.pv = b.dataset.pv; renderPreview(); }));
+function getPath(path) { return path.split('.').reduce((o, k) => o[k], state); }
+
+function teamsFromBuseo() {
+  const teams = [];
+  state.buseo.forEach((d) => {
+    if (!d.dept.trim()) return;
+    const tn = d.team.trim() ? (/(팀|위원회)$/.test(d.team.trim()) ? d.team.trim() : d.team.trim() + '팀') : '(팀 없음)';
+    let t = teams.find((x) => x.name === tn);
+    if (!t) { t = { name: tn, children: [] }; teams.push(t); }
+    t.children.push({ name: d.dept.trim(), children: d.groups.filter((g) => g.label.trim()).map((g) => ({ name: g.label.trim(), children: [] })) });
+  });
+  return teams;
+}
+
+/* ---------- 교회 조직도: 그림 그리기 + 그림에서 바로 편집 ---------- */
+const named = (l) => (l || []).filter((x) => x.name.trim());
+const isVert = (s) => /^[가-힣\s]{1,7}$/.test(s);
+const ZDEPTH = { top: 1, left: 2, right: 2, teams: 3, bottom: 1 };
+let orgSel = null;          // 선택된 칸 경로 (예: org.teams.1.children.0)
+let editMode = true;
+
+function entries(list, edit) {  // [{x, i}] — 편집 중엔 이름 없는 칸도 보이게
+  return (list || []).map((x, i) => ({ x, i })).filter((e) => edit || e.x.name.trim());
+}
+function chartBuilder(edit) {
+  const label = (x) => (x.name.trim() ? esc(x.name) : '<span class="ph">(이름)</span>');
+  const box = (path, x, cls) => `<div class="box ${cls || ''}" data-path="${path}" ${edit ? 'tabindex="0"' : ''}>${label(x)}</div>`;
+  const add = (listPath, text, cls) => (edit ? `<div class="box add ${cls || ''}" data-addto="${listPath}" tabindex="0">+ ${text}</div>` : '');
+  return { box, add, edit };
+}
+
+function renderChart(el, edit) {
+  const o = state.org, B = chartBuilder(edit);
+  const top = entries(o.top, edit), left = entries(o.left, edit), right = entries(o.right, edit);
+  const teams = entries(o.teams, edit), bottom = entries(o.bottom, edit);
+  if (!edit && !top.length && !teams.length && !left.length && !right.length && !bottom.length) {
+    el.innerHTML = '<div class="empty">조직도 내용이 없습니다. \'교회 조직도\' 탭에서 입력하세요.</div>'; return;
+  }
+  let h = `<div class="chart${edit ? ' edit' : ''}"><div class="ttl">${state.year}년 시카고 언약장로교회 조직</div>`;
+
+  // 맨 위 (공동의회 → 당회)
+  h += '<div class="top">' + top.map((e, k) => `${k ? '<div class="v"></div>' : ''}${B.box('org.top.' + e.i, e.x)}`).join('');
+  if (edit) h += `${top.length ? '<div class="v" style="opacity:.35"></div>' : ''}${B.add('org.top', '맨 위 칸', '')}`;
+  h += '</div>';
+
+  // 양옆 (같은 줄끼리 좌우 맞춤)
+  const sideItem = (zone, e, side) => {
+    const p = `org.${zone}.${e.i}`;
+    const kids = entries(e.x.children, edit);
+    let kidsHtml = '';
+    if (kids.length) {
+      kidsHtml = `<div class="kids${side === 'l' ? ' kl' : ''}">${kids.map((k) => `<div class="kid">${B.box(`${p}.children.${k.i}`, k.x)}</div>`).join('')}${edit ? `<div class="kid">${B.add(p + '.children', '하위 칸', '')}</div>` : ''}</div>`;
+    }
+    return side === 'l' ? `<div class="sitem">${kidsHtml}${B.box(p, e.x)}</div>` : `<div class="sitem">${B.box(p, e.x)}${kidsHtml}</div>`;
+  };
+  const rows = Math.max(left.length, right.length) + (edit ? 1 : 0);
+  if (rows) {
+    h += '<div class="sides">';
+    for (let r = 0; r < rows; r++) {
+      const L = left[r], R = right[r];
+      h += `<div class="sl" style="grid-row:${r + 1}">${L ? sideItem('left', L, 'l') : (edit && r === left.length ? `<div class="sitem noline">${B.add('org.left', '왼쪽 칸')}</div>` : '')}</div>`;
+      h += `<div class="sr" style="grid-row:${r + 1}">${R ? sideItem('right', R, 'r') : (edit && r === right.length ? `<div class="sitem noline">${B.add('org.right', '오른쪽 칸')}</div>` : '')}</div>`;
+    }
+    h += '</div>';
+  }
+
+  // 팀 줄 (가운데 줄 양쪽 폭이 비슷하게)
+  const lvl3 = (p, d) => {
+    const kids = entries(d.children, edit);
+    if (!kids.length) return '';
+    const vert = kids.every((k) => isVert(k.x.name || '가'));
+    if (vert) return `<div class="stem"></div><ul class="h">${kids.map((k) => `<li><span class="drop"></span>${B.box(`${p}.children.${k.i}`, k.x, 'vbox')}</li>`).join('')}${edit ? `<li><span class="drop"></span>${B.add(p + '.children', '', 'vbox small')}</li>` : ''}</ul>`;
+    return `<div class="stem"></div><div class="sub3" style="gap:calc(6px * var(--vs, 1))">${kids.map((k) => B.box(`${p}.children.${k.i}`, k.x, 'hbox')).join('')}${B.add(p + '.children', '소그룹', 'hbox')}</div>`;
+  };
+  const teamLi = (e) => {
+    const p = `org.teams.${e.i}`, depts = entries(e.x.children, edit);
+    let inner = '';
+    if (depts.length) {
+      inner = `<div class="stem"></div><ul class="h">${depts.map((d) => `<li><span class="drop"></span>${B.box(`${p}.children.${d.i}`, d.x, 'vbox')}${lvl3(`${p}.children.${d.i}`, d.x)}</li>`).join('')}${edit ? `<li><span class="drop"></span>${B.add(p + '.children', '부서', 'vbox small')}</li>` : ''}</ul>`;
+    }
+    return `<li class="team"><span class="drop"></span>${B.box(p, e.x, 'vbox')}${inner}</li>`;
+  };
+  if (teams.length || edit) {
+    const w = teams.map((t) => Math.max(1, entries(t.x.children, edit).length));
+    const total = w.reduce((a, b) => a + b, 0);
+    let half = 0, acc = 0, best = Infinity;
+    for (let i = 0; i <= teams.length; i++) {
+      const diff = Math.abs(total - 2 * acc);
+      if (diff < best) { best = diff; half = i; }
+      if (i < teams.length) acc += w[i];
+    }
+    const tl = teams.slice(0, half), tr = teams.slice(half);
+    const addTeam = edit ? `<li><span class="drop"></span>${B.add('org.teams', '팀', 'vbox')}</li>` : '';
+    h += `<div class="col3 teams-wrap">
+      <div class="half l">${tl.length ? `<ul class="h">${tl.map(teamLi).join('')}</ul>` : ''}</div>
+      <div class="spine bar"></div>
+      <div class="half r">${tr.length || addTeam ? `<ul class="h">${tr.map(teamLi).join('')}${addTeam}</ul>` : ''}</div></div>`;
+  }
+
+  // 아래 줄
+  if (bottom.length || edit) {
+    h += `<div class="spine-gap"><div></div><div class="spine"></div><div></div></div>
+      <div class="bottom"><ul class="h">${bottom.map((e) => `<li><span class="drop"></span>${B.box('org.bottom.' + e.i, e.x)}</li>`).join('')}${edit ? `<li><span class="drop"></span>${B.add('org.bottom', '아래 칸')}</li>` : ''}</ul></div>`;
+  }
+  h += '</div>';
+  if (edit) h += `<div class="opanel" id="opanel" role="dialog" aria-label="칸 편집">
+      <div class="opt" id="opTitle"></div>
+      <input class="inp" id="opName" placeholder="칸 이름" autocomplete="off">
+      <div class="opbtns">
+        <button type="button" data-op="prev" id="opPrev">◀ 앞으로</button>
+        <button type="button" data-op="next" id="opNext">뒤로 ▶</button>
+        <button type="button" data-op="sib">+ 옆에 칸 추가</button>
+        <button type="button" data-op="child" id="opChild">+ 하위 칸 추가</button>
+        <button type="button" data-op="del" class="del">삭제</button>
+        <button type="button" data-op="close" class="done">완료</button>
+      </div></div>`;
+  el.innerHTML = h;
+  alignChart(el);
+}
+
+/* 좌우 대칭 맞춤: 팀 줄 양 끝 박스를 가운데 줄에서 같은 거리에 두고,
+   오른쪽 끝을 오른쪽 기구(예: 장년 교육부) 박스의 오른쪽 끝에 맞춘다 */
+function alignChart(el, again) {
+  const chart = el.querySelector('.chart');
+  if (!again && chart) { chart.style.minWidth = ''; chart.style.width = ''; chart.style.removeProperty('--fz'); chart.style.removeProperty('--vs'); chart.style.removeProperty('--vb'); chart.style.margin = ''; }
+  const bar = el.querySelector('.teams-wrap .bar');
+  if (!chart || !chart.offsetWidth) return;   // 화면에 안 보일 때는 건너뜀
+  if (!bar) { if (!again) fitChart(el); return; }
+  const sides = el.querySelector('.sides');
+  const ulL = el.querySelector('.teams-wrap .half.l > ul.h');
+  const ulR = el.querySelector('.teams-wrap .half.r > ul.h');
+  const lisL = ulL ? [...ulL.children] : [], lisR = ulR ? [...ulR.children] : [];
+  [...lisL, ...lisR].forEach((li) => { li.style.paddingLeft = ''; li.style.paddingRight = ''; });
+  if (sides) sides.style.removeProperty('--sline');
+  const spine = bar.getBoundingClientRect().left + bar.getBoundingClientRect().width / 2;
+  const boxOf = (li) => li && li.querySelector(':scope > .box');
+  const natR = lisR.length ? boxOf(lisR[lisR.length - 1]).getBoundingClientRect().right - spine : 0;
+  const natL = lisL.length ? spine - boxOf(lisL[0]).getBoundingClientRect().left : 0;
+  let target = 0;
+  if (sides) sides.querySelectorAll('.sr .box').forEach((b) => { target = Math.max(target, b.getBoundingClientRect().right - spine); });
+  const R = Math.max(target, natR, natL);
+  const spread = (lis, dx) => {
+    if (!lis.length || dx < 0.5) return;
+    const p = dx / (2 * lis.length - 1);
+    lis.forEach((li) => { li.style.paddingLeft = (2 + p) + 'px'; li.style.paddingRight = (2 + p) + 'px'; });
+  };
+  spread(lisR, R - natR);
+  spread(lisL, R - natL);
+  if (sides && target && R - target > 0.5) sides.style.setProperty('--sline', (18 + R - target) + 'px');
+  // 가장 멀리 나간 칸이 화면 폭을 넘으면 폭을 넓혀 다시 맞춤 (가운데 줄 유지)
+  if (!again) {
+    let need = 0;
+    chart.querySelectorAll('.box').forEach((b) => { const r = b.getBoundingClientRect(); need = Math.max(need, spine - r.left, r.right - spine); });
+    const want = Math.ceil(2 * need + 24);
+    if (want > chart.offsetWidth) { chart.style.minWidth = want + 'px'; alignChart(el, true); }
+    fitChart(el);
+  }
+}
+/* 화면: 차트 전체가 상자 폭에 들어가게 축소(모바일은 핀치 줌으로 확대).
+   인쇄: 세로 Letter 한 장(약 740×980px)에 들어가게 축소 */
+function fitChart(el) {
+  const chart = el.querySelector('.chart');
+  if (!chart || !chart.offsetWidth) return;
+  const W = chart.offsetWidth, H = chart.offsetHeight;
+  chart.style.width = W + 'px';   // 축소해도 배치가 바뀌지 않게 폭 고정
+  const fz = Math.min(1, (el.clientWidth - 2) / W);
+  chart.style.setProperty('--pz', Math.min(1, 740 / W, 980 / H).toFixed(4));
+  if (fz < 0.999) chart.style.setProperty('--fz', fz.toFixed(4));
+  // transform 축소는 배치 크기를 줄이지 않으므로 여백을 음수로 줘서 실제 차지하는 크기를 맞춤
+  if (fz < 0.999) {
+    const H2 = chart.offsetHeight;
+    chart.style.margin = `0 ${-(W * (1 - fz)).toFixed(1)}px ${-(H2 * (1 - fz)).toFixed(1)}px 0`;
+  }
+}
+let fitTimer = 0, fitVW = window.innerWidth, fitVH = 0;
+window.addEventListener('resize', () => {
+  // 스크롤할 때 주소창이 숨겨지며 생기는 높이 변화는 무시하고, 폭(회전 등)이 바뀔 때만 다시 맞춤
+  if (window.innerWidth === fitVW) return;
+  fitVW = window.innerWidth; fitVH = 0;
+  clearTimeout(fitTimer);
+  fitTimer = setTimeout(() => {
+    ['orgEdit', 'orgChart'].forEach((id) => { const el = $(id); if (el && el.offsetWidth) { alignChart(el); if (id === 'orgEdit' && orgSel) openPanel(orgSel, false); } });
+  }, 150);
+});
+
+function fixBrackets() { /* 선은 CSS 로 그림 */ }
+
+/* ----- 편집 동작 ----- */
+const ZNAME = { top: '맨 위', left: '왼쪽 기구', right: '오른쪽 기구', teams: '팀', bottom: '아래 줄' };
+function nodeInfo(path) {
+  const parts = path.split('.');
+  const zone = parts[1], idx = Number(parts[parts.length - 1]);
+  const listPath = parts.slice(0, -1).join('.');
+  const level = parts.filter((x) => x === 'children').length + 1;
+  const kind = zone === 'teams' ? ['팀', '부서', '소그룹'][level - 1] : (level === 1 ? ZNAME[zone] : '하위 칸');
+  const vertical = (zone === 'top' || zone === 'left' || zone === 'right');
+  return { zone, idx, listPath, level, kind, vertical, list: getPath(listPath), node: getPath(path) };
+}
+function renderOrgEdit() {
+  renderChart($('orgEdit'), editMode);
+  if (editMode && orgSel) {
+    try { getPath(orgSel).name; openPanel(orgSel, false); } catch (e) { orgSel = null; }
+  }
+}
+function openPanel(path, focus = true) {
+  const chart = $('orgEdit').querySelector('.chart');
+  const boxEl = chart && chart.querySelector(`.box[data-path="${path}"]`);
+  const panel = $('opanel');
+  if (!boxEl || !panel) return;
+  orgSel = path;
+  chart.querySelectorAll('.box.sel').forEach((b) => b.classList.remove('sel'));
+  boxEl.classList.add('sel');
+  const inf = nodeInfo(path);
+  $('opTitle').textContent = inf.zone === 'teams' || inf.level > 1 ? `${ZNAME[inf.zone]} · ${inf.kind}` : ZNAME[inf.zone];
+  $('opName').value = inf.node.name;
+  $('opPrev').textContent = inf.vertical ? '▲ 위로' : '◀ 앞으로';
+  $('opNext').textContent = inf.vertical ? '▼ 아래로' : '뒤로 ▶';
+  $('opPrev').disabled = inf.idx === 0;
+  $('opNext').disabled = inf.idx >= inf.list.length - 1;
+  $('opChild').disabled = inf.level >= ZDEPTH[inf.zone];
+  $('opChild').textContent = inf.zone === 'teams' && inf.level < 3 ? `+ ${['부서', '소그룹'][inf.level - 1]} 추가` : '+ 하위 칸 추가';
+  panel.classList.add('open');
+  const wrap = $('orgEdit'), c = wrap.getBoundingClientRect(), r = boxEl.getBoundingClientRect();
+  let leftPx = r.left - c.left + wrap.scrollLeft + r.width / 2 - panel.offsetWidth / 2;
+  leftPx = Math.max(wrap.scrollLeft + 4, Math.min(leftPx, wrap.scrollLeft + wrap.clientWidth - panel.offsetWidth - 4));
+  panel.style.left = leftPx + 'px';
+  panel.style.top = (r.bottom - c.top + wrap.scrollTop + 8) + 'px';
+  if (focus) { $('opName').focus(); $('opName').select(); }
+}
+function closePanel() {
+  orgSel = null;
+  const p = $('opanel'); if (p) p.classList.remove('open');
+  document.querySelectorAll('#orgEdit .box.sel').forEach((b) => b.classList.remove('sel'));
+}
+function newNode() { return { name: '', children: [] }; }
+function selectNew(path) { renderOrgEdit(); openPanel(path); }
+
+$('orgEdit').addEventListener('click', (e) => {
+  if (!editMode) return;
+  const addEl = e.target.closest('[data-addto]');
+  if (addEl) {
+    const lp = addEl.dataset.addto, list = getPath(lp);
+    list.push(newNode()); setDirty(true);
+    selectNew(`${lp}.${list.length - 1}`); return;
+  }
+  const boxEl = e.target.closest('.box[data-path]');
+  if (boxEl) { renderOrgEdit(); openPanel(boxEl.dataset.path); return; }
+  const op = e.target.closest('[data-op]');
+  if (op && orgSel) { doOp(op.dataset.op); return; }
+  if (!e.target.closest('.opanel')) closePanel();
+});
+$('orgEdit').addEventListener('keydown', (e) => {
+  if (e.target.id === 'opName') {
+    if (e.key === 'Enter') { e.preventDefault(); closePanel(); }
+    if (e.key === 'Escape') closePanel();
+    return;
+  }
+  if ((e.key === 'Enter' || e.key === ' ') && (e.target.matches('.box[data-path]') || e.target.matches('[data-addto]'))) { e.preventDefault(); e.target.click(); }
+});
+$('orgEdit').addEventListener('input', (e) => {
+  if (e.target.id !== 'opName' || !orgSel) return;
+  const node = getPath(orgSel);
+  node.name = e.target.value;
+  const b = $('orgEdit').querySelector(`.box[data-path="${orgSel}"]`);
+  if (b) b.innerHTML = node.name.trim() ? esc(node.name) : '<span class="ph">(이름)</span>';
+  alignChart($('orgEdit'));
+  setDirty(true);
+});
+function doOp(op) {
+  const inf = nodeInfo(orgSel);
+  switch (op) {
+    case 'close': closePanel(); return;
+    case 'prev': case 'next': {
+      const k = inf.idx + (op === 'prev' ? -1 : 1);
+      if (k < 0 || k >= inf.list.length) return;
+      [inf.list[inf.idx], inf.list[k]] = [inf.list[k], inf.list[inf.idx]];
+      setDirty(true); orgSel = `${inf.listPath}.${k}`; renderOrgEdit(); return;
+    }
+    case 'sib':
+      inf.list.splice(inf.idx + 1, 0, newNode()); setDirty(true);
+      selectNew(`${inf.listPath}.${inf.idx + 1}`); return;
+    case 'child':
+      if (inf.level >= ZDEPTH[inf.zone]) return;
+      inf.node.children.push(newNode()); setDirty(true);
+      selectNew(`${orgSel}.children.${inf.node.children.length - 1}`); return;
+    case 'del': {
+      const n = inf.node.children ? inf.node.children.length : 0;
+      if (!confirm(`'${inf.node.name || '이 칸'}'${n ? ` 과(와) 하위 칸 ${n}개` : ''}을(를) 삭제할까요?`)) return;
+      inf.list.splice(inf.idx, 1); setDirty(true); orgSel = null; renderOrgEdit(); return;
+    }
+  }
+}
+$('editToggle').addEventListener('change', (e) => { editMode = e.target.checked; closePanel(); renderOrgEdit(); });
+$('orgPrintBtn').addEventListener('click', () => { closePanel(); state.pv = 'org'; document.querySelector('.tab[data-view=preview]').click(); setTimeout(() => window.print(), 80); });
+window.addEventListener('resize', () => { if (state.view === 'org' && orgSel) openPanel(orgSel, false); });
+
+function focusLast(listId) {
+  const cards = $(listId).querySelectorAll('.card');
+  const last = cards[cards.length - 1];
+  if (last) { last.scrollIntoView({ behavior: 'smooth', block: 'center' }); const inp = last.querySelector('input.title'); if (inp) setTimeout(() => inp.focus(), 250); }
+}
+
+/* ---------- 탭 ---------- */
+document.querySelectorAll('.tab').forEach((t) => t.addEventListener('click', () => {
+  state.view = t.dataset.view;
+  document.querySelectorAll('.tab').forEach((x) => x.setAttribute('aria-selected', String(x === t)));
+  ['gigu', 'buseo', 'org', 'hist', 'preview'].forEach((v) => { $('view-' + v).hidden = v !== state.view; });
+  if (state.view === 'hist') renderHist();
+  if (state.view === 'preview') renderPreview();
+  if (state.view === 'org') renderOrgEdit();
+  if (state.view === 'gigu' || state.view === 'buseo') autoGrowAll($('view-' + state.view));
+  window.scrollTo({ top: 0 });
+}));
+
+/* ---------- 연도 ---------- */
+async function loadYear(year) {
+  setLoading(true);
+  try {
+    const d = await apiLoad(year);
+    state.year = Number(year);
+    state.years = (d.years || state.years).map(Number);
+    state.gigu = normGigu(d.gigu);
+    state.buseo = normBuseo(d.buseo);
+    state.org = normOrg(d.org);
+    orgSel = null;
+    setDirty(false);
+    renderAll();
+  } catch (err) {
+    $('banner').innerHTML = `<div class="banner error">${esc(err.message)}</div>`;
+  } finally { setLoading(false); }
+}
+$('yearSel').addEventListener('change', async (e) => {
+  const y = Number(e.target.value);
+  if (state.dirty && !confirm('저장하지 않은 변경 내용이 있습니다. 다른 연도로 바꿀까요?')) { e.target.value = state.year; return; }
+  await loadYear(y);
+});
+
+function openModal(id) { $(id).classList.add('open'); }
+function closeModal(id) { $(id).classList.remove('open'); }
+document.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => closeModal(b.dataset.close)));
+document.querySelectorAll('.modal-bg').forEach((m) => m.addEventListener('click', (e) => { if (e.target === m) closeModal(m.id); }));
+
+$('newYearBtn').addEventListener('click', () => {
+  const max = Math.max(...state.years, state.year || new Date().getFullYear());
+  $('newYearInput').value = max + 1;
+  $('srcYearSel').innerHTML = state.years.map((y) => `<option value="${y}" ${y === state.year ? 'selected' : ''}>${y}년</option>`).join('') + '<option value="">빈 조직표로 시작</option>';
+  $('yearErr').textContent = '';
+  openModal('yearModal');
+});
+$('yearForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const ny = Number($('newYearInput').value), src = $('srcYearSel').value;
+  if (!ny || ny < 2000 || ny > 2100) { $('yearErr').textContent = '연도를 확인해 주세요.'; return; }
+  if (state.years.includes(ny)) { $('yearErr').textContent = `${ny}년은 이미 있습니다. 위에서 선택해 수정하세요.`; return; }
+  if (state.dirty && !confirm('저장하지 않은 변경 내용이 있습니다. 계속할까요?')) return;
+  closeModal('yearModal');
+  let gigu = [], buseo = [], org = emptyOrg();
+  if (src) {
+    if (Number(src) === state.year) { gigu = clone(state.gigu); buseo = clone(state.buseo); org = clone(state.org); }
+    else {
+      setLoading(true);
+      try { const d = await apiLoad(Number(src)); gigu = normGigu(d.gigu); buseo = normBuseo(d.buseo); org = normOrg(d.org); }
+      catch (err) { toast(err.message, true); setLoading(false); return; }
+      setLoading(false);
+    }
+  }
+  state.year = ny; state.gigu = gigu; state.buseo = buseo; state.org = org;
+  renderAll(); setDirty(true);
+  toast(`${ny}년 조직표를 만들었습니다. 수정 후 저장하세요.`);
+});
+
+/* ---------- 저장 ---------- */
+function validate() {
+  const errs = [];
+  state.gigu.forEach((g, i) => { if (!g.name.trim() && g.roles.some((r) => r.title || r.names)) errs.push(`기구 ${i + 1}번의 이름이 비어 있습니다.`); });
+  state.buseo.forEach((d, i) => { if (!d.dept.trim() && (d.leader || d.members || d.head)) errs.push(`부서 ${i + 1}번의 부서 이름이 비어 있습니다.`); });
+  const seen = {};
+  state.buseo.forEach((d) => { const k = d.dept.trim(); if (k) seen[k] = (seen[k] || 0) + 1; });
+  Object.keys(seen).forEach((k) => { if (seen[k] > 1) errs.push(`'${k}' 부서가 두 번 있습니다. 부서 이름은 한 번씩만 써 주세요.`); });
+  return errs;
+}
+$('saveBtn').addEventListener('click', () => {
+  const errs = validate();
+  if (errs.length) { alert(errs.join('\n')); return; }
+  doSave();
+});
+async function doSave() {
+  const btn = $('saveBtn');
+  btn.disabled = true; setLoading(true, '저장 중…');
+  try {
+    const msgs = [];
+    if (state.dirty || !state.histDirty) {
+      const r = await apiSave();
+      if (r.years) state.years = r.years.map(Number);
+      renderYears(); setDirty(false);
+      msgs.push(`${state.year}년 조직표`);
+    }
+    if (state.histDirty) {
+      closeHistEdit(false);
+      const r = await apiSaveHistory();
+      setHistDirty(false);
+      msgs.push(`교회 연혁 ${r.count != null ? r.count : state.hist.length}건`);
+      if (state.view === 'hist') renderHist();
+    }
+    toast(msgs.join(', ') + '을(를) 저장했습니다.');
+  } catch (err) {
+    toast(err.message, true);
+  } finally { btn.disabled = false; setLoading(false); }
+}
+
+window.addEventListener('beforeunload', (e) => { if (state.dirty || state.histDirty) { e.preventDefault(); e.returnValue = ''; } });
+
+/* ---------- 교회 연혁 ---------- */
+// 첨부 자료 '시카고언약장로교회 연혁 (10-24-2024)' 에서 옮긴 초기 자료: [연도, 날짜, 내용]
+const HIST_SEED = [[1976,"11월28일","7622 Waukegan 에서 첫 예배를 드림"],[1976,"12월 4일","Niles Community Church를 예배장소로 정함 (7401 Oakton, Niles)"],[1977,"1월 9일","교회 명칭을 나일스한인장로교회라 함"],[1977,"3월 6일","나일스 한인 장로 교회'로 창립예배"],[1978,"9월","시카고 노회 가입예배"],[1981,"3월","임시공동의회에서 새 성전 건축 대지결정\n(1424 Greenwood)"],[1981,"11월15일","새성전 기공예배"],[1982,"5월","새 성전 헌당 예배 교회명을 \"가나안장로교회\"라 변칭"],[1982,"7월","제1회 여름하기학교 개강 (4주)"],[1982,"10월","제1회 선교 바자회, 가나안 어린이 음악,"],[1984,"1월","교회묘지 구입 (Ridgewood Cemetary)"],[1985,"8월","제1회 청소년 부흥회 실시"],[1986,"8월","교육관 신축 기공식"],[1987,"4월 5일","교육관 입당"],[1987,"4월26일","창립 10 주년 기념. 교육관 헌당, 기념성회 (강사:김장환 목사)"],[1988,"2월","주일 2부 예배와 3부 영어예배 실시"],[1989,"7월","새성전 공사 착공, 제2부 영어부 시작"],[1989,"11월","제1회 가나안 장학금 전달식"],[1990,"4월","새성전 입당및 부흥회 (강사:김진홍 목사)"],[1990,"10월","새성전 헌당및 부흥회 (강사:박조준 목사)"],[1990,"11월","제1회 가나안 장학금 전달식"],[1991,"4월","제2 파킹랏 대지 구입"],[1992,"3월","가나안 토요 한국학교 개강"],[1993,"3월","Youth Center 건립위원회 조직"],[1993,"12월","가나안 기도원 구입 (Wisconsin)"],[1994,"3월","기도원 개원"],[1994,"4월","Soup Kitchen 시작, 가나안소망대학 개교"],[1994,"6월","도미니카 단기 선교"],[1996,"1월","중국 요녕성 서교교회 건축헌당"],[1996,"3월","반호목사 중국 선교사로 파송"],[1996,"4월","가나안 제2성전 교육관 구입 (1240 Greenwood)"],[1996,"11월","창립 20주년 기념예배"],[1997,"5월","정성일 전도사 중국 선교사 파송"],[1997,"10월","Hallelujah Night 시작"],[1997,"11월","북한 황해도 사리원 국수공장 설립"],[1997,"12월","가나안 지상사 학교 설립"],[1998,"9월","가나안 예술학교(음악. 미술) 설립"],[1998,"11월","청년회 READY 행사 시작"],[1999,"3월","열린예배 시작"],[1999,"6월","최광규 선교사. 도미니카 파송"],[1999,"9월","이슬비 전도반 개교"],[1999,"12월","남계영 선교사. 볼리비아 파송"],[2000,"1월","영상예배 실시"],[2000,"9월23일","볼리비아 단기선교사 31명 파송 (의료,건축,미용,VBS)"],[2001,"6월","영성훈련 여자 1기"],[2001,"9월","거니 가나안 교회 개척"],[2001,"9월","볼리비아 가나안 교회 헌당"],[2001,"11월","영성훈련 남자 1기"],[2001,"11월","멕시코 초쵸 가나안 교회 헌당"],[2001,"12월","가나안 제2성전 부지 확보"],[2002,"1월","가나안 Web (www.canaan.org)"],[2002,"1월","가나안 Cell Group 구성"],[2002,"9월","볼리비아 단기 선교 및 수도공사"],[2002,"12월","Joy Lee 선교사 중국 현지 파송"],[2003,"9월","Walk for Mission 제 1회 행사"],[2004,"6월","볼리비아 가나안 병원 헌당"],[2004,"8월","새 주차장 완공"],[2004,"10월","볼리비아 가나안 학교 신축"],[2004,"10월","제8차 아론 한나 유카탄 선교"],[2005,"1월","제 2대 목회자 청빙위원회 구성"],[2005,"6월","볼리비아 가나안 기독교학교 건립헌당"],[2006,"2월","Vision Center 착공식"],[2007,"2월","Vision Center 완공"],[2007,"5월6일","김성웅 목사(임시 목사로 시무)"],[2007,"7월 21일","성경공부를 위한 소그룹 조직 완료 (총 22 샘터) 및 인도자 첫 모임"],[2009,"7월 26일","김성웅 목사 이임예배"],[2009,"11월","전교우 수양회 (The Cove of Lake Geneva) – 21~22일"],[2010,"1월 3일","Gina 전도사 (유치, 유년부) 담당 부임"],[2010,"4월 18일","David Papendorf 전도사 (중등부) 담당 부임"],[2010,"8월","멕시코 단기 선교사 파송(총30명)- 7 ~14일"],[2010,"9월","전교인 수양회 (Eaglewood Resort) - 18~19일"],[2010,"11월 21일","시카고 언약 장로교회로 PCUSA에 의해 창립\n(장소: 참길 장로교회)"],[2010,"11월 21일","장로 선출 및 안수 / 임직식을 거쳐 시카고 언약 장로교회 조직을 완료"],[2010,"12월 26일","Gina 전도사 (유치, 유년부) 담당 사임"],[2011,"1월 2일","Chris Kim 전도사 (고등부) 담당 부임"],[2011,"2월6일","Thomas Yang 전도사(유치, 유년부) 담당 부임"],[2011,"3월 8일","교육관 및 Vision Center 로 돌아옮"],[2011,"3월 9일","Vision Center 에서 수요예배로 첫 예배를 드림"],[2011,"3월 25일","첫 금요 기도회로 드림"],[2011,"3월 25일","유년 주일학교 성경 공부 다시 시작"],[2011,"3월 30일","빌립 훈련 성경공부 시작"],[2011,"5월 22일","David Papendorf 전도사 (중등부)담당 사임"],[2011,"6월 5일","주일 예배를 1부 와 2부로 나누어서 드리기 시작"],[2011,"8월 6일","멕시코 단기 선교사 파송(총 39명) - 6~14일"],[2011,"9월 10일","언약 지상사 특목학교 개교"],[2011,"9월 25일","공천위원 선출을 위한 공동의회 소집"],[2011,"10월 16일","전교인 단풍길 걷기 실시 (Captain Daniel Forest Reserve)"],[2011,"11월 10일","교인을 위한 Computer Class 를 개강"],[2011,"11월 13일","전 교인 가을 수련회 실시"],[2011,"11월 20일","창립 1주년 기념예배 및 권사 취임 및 집사 안수식"],[2011,"12월 11일","구약성경 통독 대회 시작"],[2011,"12월 25일","제직 은퇴식"],[2012,"1월","백용석 목사 AC 승인으로 시무시작(Transitional Pastor)"],[2012,"6월 10일","전교인 야외 예배 및 걷기 실시 (Daniel Forest Reserve)"],[2012,"8월 4일","멕시코 단기 선교사 파송 (총 29명, 유카탄 Celestun 교회와 Izamal 교회 – VBS & 건축 사역) - 4~11일"],[2012,"8월26일","Thomas Yang 전도사(유치, 유년부) 담당 사임"],[2012,"11월4일","본당 입당 및 1,2,3부로 예배 를 드림"],[2013,"1월6일","김현일 목사(청년, 장년담당)와 하나영 전도사(주일학교 담당) 부임"],[2013,"3월 10일","제 1회 지구별 찬양 경연대회"],[2013,"6월 23일","EM 예배 시작"],[2013,"6월 29일","멕시코 단기 선교사 파송 (총 29명, 유카탄 Celestun 교회와 Kantunil지역– VBS & 건축팀, 의료팀 사역) – 29~7월 6일"],[2013,"8월 11일","교회 Symbol Mark 제정 및 사용"],[2013,"9월 6일 ~ 8일","전병금 목사(서울 강남교회 담임목사)\n부흥회"],[2013,"11월 10일","담임 목사 청빙을 위한 청빙위원회 구성 (공동의회)"],[2014,"1월5일","2부 예배를 찬양예배로 드림\n(찬양과 말씀중심- 본당 소예배실)"],[2014,"3월 9일","제 2회 지구별 찬양제"],[2014,"3월 30일","1대 담임목사 청빙을 위한 임시공동의회\n(백용석 목사 청빙 결정)"],[2014,"6월 1일","담임목사 위임 예배 및 위임식(1대 백용석 목사)"],[2014,"6월 24일","중보기도팀 운영 실시"],[2014,"7월 7일","온두라스 단기 선교 VBS팀 파송(7. 7~19, 노회 연합)"],[2014,"7월 18일","치유와 회복을 위한 특별집회\n(7.18~20, 강사: 정태기 목사)"],[2014,"8월 2일","멕시코 단기 선교 건축팀 파송(Izamal교회, 8. 2~9)"],[2014,"9월 1일","어린이부 주일 한글교실 개강"],[2014,"9월 7일","언약 온 세대 예배 시작(3부 예배)"],[2014,"9월 28일","하나영 전도사 (한인교육문화 마당집 사회 선교활동)으로 사임"],[2014,"10월 ~12월","이현주 전도사 사역 (유년부 Interim)"],[2014,"11월 2일","3부 예배 영어 통역 시작"],[2014,"11월 30일","권사 취임 및 집사 안수식"],[2014,"12월 28일","제직 은퇴식"],[2015,"2월 28일","음악 아카데미 임시로 시작"],[2015,"3월 15일","전 교인 대상 주일 성경 공부 시작"],[2015,"7월4일 ~11일","니카라과 단기 선교팀 파송(건축팀 4명)"],[2015,"7월 5일","Andy Gehron전도사 (중등부 담당) 부임"],[2015,"7월 15일","제 1회 시카고 언약 장학금 수여식"],[2015,"8월 23일","Lee-Kim 전도사 (유년부) 부임"],[2015,"8월 29일","음악 아카데미 개강 예배"],[2016,"2월 2일","커피브레이크 성경공부 시작"],[2016,"2월 7일","김요한 EM pastor 부임"],[2016,"2월 21일","백용석 목사 사임 후 서울 강남 교회로 부임"],[2016,"2월 22일","이종형 임시 당회장 부임(전 한미장로교회 담임목사)"],[2016,"2월 28일","Youth Orchestra 창단"],[2016,"3월 15일","Lee-Kim 전도사 (유년부) 사임"],[2016,"5월 12일","어르신 봄맞이 야유회(Lake Geneva)"],[2016,"6월8일 ~ 15일","니카라과 단기 선교팀 파송"],[2016,"6월 19일","제 2회 시카고 언약 장학금 수여식"],[2016,"6월 26일","중등부 전도사 Andy Gehron 사임"],[2016,"7월 3일","홍해만 전도사 (중등부 담당) 부임"],[2016,"7월 11일","기도원 매각(Kenosha, WI) 소재"],[2016,"8월 8일 ~ 12일","어린이 여름 성경학교(VBS)"],[2016,"9월 3일","시카고 언약 음악 아카데미 개강"],[2016,"9월 29일 ~10월 1일","PCUSA 남선교회 주관\n2016 Vision Conference"],[2016,"10월 23일","차광선 제 2대 담임 목사 청빙결정"],[2016,"10월 30일","이봉헌 목사(유치, 유년부) 부임"],[2016,"11월 27일","고등부 Chris Kim 전도사 사임"],[2016,"12월 25일","김현일 부목사 사임"],[2016,"12월 26일 ~ 29일","중. 고등부 겨울 수양회\n(Cedar Lake Ministries)"],[2017,"2월 19일","김주현, 송영민 부목사 부임"],[2017,"3월 19일","제 2대 담임목사(차광선) 위임 감사예배 및 위임식"],[2017,"3월24일 ~26일","중 서부 한미노회 주관 연합부흥회\n(강사: 김동호 목사)"],[2017,"5월21일","정세영 EM 교육 전임 목사 부임"],[2017,"5월 28일 ~29일","찬양위원회 전체 수련회\n(Green Lake Conference Center, WI)"],[2017,"6월11일","전 교인 야외예배\n(Captain Daniel Forest Preserve)"],[2017,"6월16일 ~18일","중. 고등부 여름수련회\n(Cedar Lake Ministries, IN)"],[2017,"7월 5일","여름 신앙 특강"],[2017,"7월 28일 ~ 8월 4일","니카라과 해외단기선교 파송"],[2017,"8월 7일 ~ 11일","어린이 여름 성경학교 (VBS)"],[2017,"9월 11일 ~ 23일","본당 강단 변경 공사"],[2017,"10월 3일 ~12월16일","시카고언약장로교회 성경대학(CBS)"],[2017,"11월 12일","강재숙 유치부 전도사 부임"],[2017,"11월 26일","시카고언약교회 장학금 수여식"],[2017,"12월 26일 ~ 29일","중.고등부 겨울 수련회\n(Cedar Lake Ministries, IN)"],[2018,"4월 ~ 7월","선교 훈련학교(매 주 1회)"],[2018,"5월 20일","시카고언약교회 장학금 수여 (7명)"],[2018,"6월8일 ~6월 10일","중. 고등부 여름수련회\n(Covenant Harbor, WI)"],[2018,"6월 17일","선교 바자회"],[2018,"6월 22일 ~6월 24일","중. 서부 한미 노회 주관\n찬양예배 및 세미나 (강사: 김명환 목사)"],[2018,"7월 3일 ~7월 10일","멕시코 단기선교 (건축팀 3명)"],[2018,"7월 15일","정세영 EM교육(중,고등부) 목사 사임"],[2018,"7월 29일","송영민 목사(KM교육 담당) 사임"],[2018,"8월 6일 ~8월 10일","어린이 여름 성경학교(VBS)"],[2018,"8월 26일","2018 할렐루야 대성회(주최:교회협의회)\n강사: 이용규 선교사"],[2018,"9월 2일","박재영(James ) 중.고등부 전도사 부임"],[2018,"10월28일","이봉원 목사(유년부 담당) 사임"],[2018,"12월 26일 ~12월 29일","중. 고등 부 겨울 수련회\n(Cedar Lake Ministries, IN)"],[2018,"12월 30일","김주현 목사 사임"],[2019,"1월 14일","차광선 담임목사 사임"],[2019,"2월 4일 ~ 2일 11일","과테말라 단기선교 (건축팀 5명)"],[2019,"2월 10일","임시 당회장 이만석 목사 시무 시작"],[2019,"3월 31일","김요한 EM Pastor 사임"],[2019,"5월 5일","시카고언약교회 장학금 수여식 (5명)"],[2019,"5월 19일","3대 담임목사 청빙위원회 구성"],[2019,"6월 11일 ~ 6월14일","중. 고등부 여름수련회\n(Cedar Lake Ministries, IN)"],[2019,"6월 30일","공천위원 선출"],[2019,"7월 19일","공천을 위한 정관 수정"],[2019,"8월 4일","EM Pastor (Richard Kim) 부임"],[2019,"10월 13일","유승원 3대 담임 목사 청빙결정"],[2019,"12월 26일 ~ 12월 29일","중. 고등 부 겨울 수련회\n(Cedar Lake Ministries, IN)"],[2020,"1월 3일","임시 당회장 (이만석 목사) 시무 종료"],[2020,"1월 5일","유승원 담임목사 시무 시작"],[2020,"3월 4일 ~ 3월 10일","과테말라 단기선교 (건축팀 4명)"],[2020,"3월 8일","제 3대 유승원 담임목사 위임\n감사 예배 및 위임식"],[2020,"3월 15일","COVID 19 Pandemic 상황으로 비상시국에\n대처하는 시카고언약장로교회 방침 발표"],[2020,"3월 22일","COVID 19상황으로 교회에 모이지 못하는 관계로 가정에서 주일 예배 드리도록 주보 특별판 (3/22~6/28) 발행하기\n시작함"],[2020,"3월 29일","시카고언약장로교회 장학금 수여 전달(4명)"],[2020,"4월 12일 ~ 6월 28일","부활절부터 주일 영상예배 시작\nYouTube(CCPC Media), 교회 website통해"],[2020,"7월 5일","주일 교회 현장 예배 재개(1부, 3부) 및 온라인 예배 실황\n중계(3부 : 오전 11시 예배) 시작"],[2020,"7월7일","새벽기도회(화 ~ 토) 재개"],[2020,"10월 25일","온라인 ZOOM Meeting을 통하여 청지기\n교육 및 샘터 모임 시작"],[2020,"11월 3일","온라인 ZOOM을 통해 새벽기도회 (화 ~토) 실황송출(음성만)"],[2020,"11월 11일","온라인 ZOOM을 통한 성경공부 시작"],[2021,"2월 23일","온라인 ZOOM 을 통한 샘터 모임 심방 시작"],[2021,"3월 14일","교회 농장 (Youth Chapel 옆) OPEN알림"],[2021,"4월 29일","정관 수정(시무장로 공천자격 수정 집사, 또는 권사로 3년\n이상 사역한 자로 수정함)"],[2021,"8월 15일","공천위원선출(COVID -19관계로 당회에서 공천위원 후보를\n선임하여 공동의회에서 선출함)"],[2021,"10월 17일","제직선출 공동의회"],[2021,"11월 21일","창립 11주년 기념예배 및 장로, 권사 취임 및 집사 안수식"],[2021,"12월 26일","제직 은퇴식"],[2022,"1월 2일","김대희 전도사(1부 설교통역 시작) / 이봉헌 목사 사역"],[2022,"2월 13일","1부(오전9:00), 3부(오전 11:00) 예배 순서가 개편됨"],[2022,"3월 20일","시카고언약장로교회 미래 비전 특별위원회구성"],[2022,"5월 8일","COVID -19관계로 그동안 중단했던 예배 후 친교 (다과)시작"],[2022,"6월 5일","COVID -19관계로 문을 닫았던 교회 도서실 다시 open"],[2022,"6월 12일","임시공동의회 (안건1: Corner Parking lot 매각 승인 요청)\n안건2: 교회의 미래와 사역과 재정 건정성을 확보하기 위해\n본당 또는 비전센터 재산(부동산) 매각 승인 요청"],[2022,"7월 16일","‘사랑의 나눔’ 사역 시작(매달 3째주 토요일)"],[2022,"7월 24일","공천위원 선출 공동의회"],[2022,"7월 25일 ~ 7월28일","중. 고등부 여름수련회\n(Illinois Wesleyan University)"],[2022,"7월 29일 ~ 7월31일","유, 초등부 ‘어린이 여름 제자 캠프’\n비전센터에서"],[2022,"8월 7일","제직 부서장 회의 다시 개최"],[2022,"8월 19일","COVID -19관계로 그동안 중단했던 금요기도회 재개"],[2022,"8월 21일","임시공동의회(안건: Vision Center Property(Youth Chapel,\nHouse, Farm 포함) Lease 승인 요청"],[2022,"9월 18일","2023년 제직 선출 공동의회"],[2022,"10월 13일 ~ 10월 16일","Vision Center Moving (비전센터안에 있던 목회실, 교회사무실\n본당으로 이전 16(주일)부터는 모든 사역자들은본당에서 근무"],[2022,"11월 18일 ~11월 20일","창립 12 주년 기념 부흥회(강사: 허봉기 목사)\n주제: 다시 한번 시작하게 하소서"],[2022,"11월 20일","창립 12주년 기념예배 및 장로, 권사 취임 및 집사 임직식"],[2022,"11월 27일","Vision Center 를 Hope Community Church에게 임대/ 매매 계약"],[2022,"12월 25일","제직 은퇴식"],[2023,"1월 1일","첫 주일부터 오전 10시 예배 한번만 드림\n예배 후 점심식사 제공"],[2023,"1월 1일","사역자 위촉 :\n(협동목사-곽평화목사, 예배 사역자- 김용민 전도사)"],[2023,"1월 11일","정관 수정(동사 목사건)"],[2023,"1월 22일","정기공동의회 중 2차 안건 동사 목사 청빙위원선출"],[2023,"2월19일","선교회 다시 조직"],[2023,"4월 2일","교회 학교 아이들의 안전과 본당 건물 안전을 위해 CCTV 설치"],[2023,"6월 4일","중.고등부 James Park 전도사 사임"],[2023,"6월 18일","김윤민 동사 목사 청빙결정"],[2023,"7월 15일 ~ 7월22일","과테말라 단기선교(3명)"],[2023,"7월 23일","공천위원회 선출"],[2023,"8월 23일 ~ 8월30일","멕시코 단기 의료 선교(8명)"],[2023,"8월 27일","이봉헌 목사 사임"],[2023,"9월 1일","김윤민 동사목사 시무 시작"],[2023,"9월 1일","영상 사역자-노동기 전도사, CCYG 사역자- Shawn Murphy"],[2023,"9월 17일","유승원 담임목사 은퇴식"],[2023,"10월 15일","제 4대 김윤민 담임목사 위임 감사 예배 및 위임식"],[2023,"11월 19일","창립 13주년 기념 감사 예배 및 장로, 집사 임직식"],[2024,"1월 7일","주일 예배를 1부(오전 8:30)와 2부(오전 10:00)로\n대 예배실에서 드림"],[2024,"1월 14일","송준서 전도사 (유. 조등부 담당) 임시 담당"],[2024,"","EM 예배 다시 드림(오전 11:45, 소예배실)\nEM 사역- Pastor Bo Yong Song, Pastor Seung Han Lee"],[2024,"4월 7일","이신민 부목사 부임"],[2024,"7월 10일 ~7월 17일","멕시코 단기 선교(8명)"],[2024,"8월 11일","나승은 목사 부임(유, 초등부 담당)"],[2024,"9월 15일","Sean Kim 목사 부임(중.고등부 담당)"]].map(([year, date, text]) => ({ year, date, text }));
+let DEMO_HIST = clone(HIST_SEED);
+let histEdit = -1, histQ = '', histDec = 'all', histDescOrder = false;
+
+async function apiHistory() {
+  if (!API_URL) return { history: clone(DEMO_HIST) };
+  return jsonp({ action: 'history' });
+}
+async function apiSaveHistory() {
+  if (!API_URL) { DEMO_HIST = clone(state.hist); await new Promise((r) => setTimeout(r, 200)); return { ok: true, count: state.hist.length }; }
+  return post({ action: 'saveHistory', history: state.hist });
+}
+function normHist(list) {
+  return (list || []).map((h) => ({ year: Number(h.year) || '', date: String(h.date || ''), text: String(h.text || '') }));
+}
+function sortHist() {
+  const idx = state.hist.map((h, i) => ({ h, i, y: Number(h.year) || 0 }));
+  idx.sort((a, b) => a.y - b.y || a.i - b.i);
+  return idx;
+}
+async function loadHistory() {
+  try {
+    const r = await apiHistory();
+    state.hist = normHist(r.history);
+    state.histLoaded = true;
+    state.histError = '';
+  } catch (err) {
+    state.histError = err.message;
+  }
+  histEdit = -1;
+  setHistDirty(false);
+  if (state.view === 'hist') renderHist();
+}
+function hl(s) {
+  const t = esc(s);
+  if (!histQ) return t;
+  const q = esc(histQ).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return t.replace(new RegExp(q, 'gi'), (m) => `<mark>${m}</mark>`);
+}
+function histMatches(h) {
+  if (histDec !== 'all' && Math.floor((Number(h.year) || 0) / 10) * 10 !== Number(histDec)) return false;
+  if (!histQ) return true;
+  const q = histQ.toLowerCase();
+  return (String(h.year) + ' ' + h.date + ' ' + h.text).toLowerCase().includes(q);
+}
+function renderHist() {
+  // 연대 칩
+  const decs = [...new Set(state.hist.map((h) => Math.floor((Number(h.year) || 0) / 10) * 10).filter(Boolean))].sort();
+  $('histChips').innerHTML = state.hist.length ? [`<button class="chip" type="button" data-dec="all" aria-pressed="${histDec === 'all'}">전체</button>`]
+    .concat(decs.map((d) => `<button class="chip" type="button" data-dec="${d}" aria-pressed="${String(histDec) === String(d)}">${d}년대</button>`)).join('') : '';
+
+  if (!state.hist.length) {
+    $('histInfo').textContent = '';
+    $('histList').innerHTML = state.histError
+      ? `<div class="banner error">${esc(state.histError)}</div>`
+      : `<div class="hist-empty">아직 저장된 연혁이 없습니다.<br>첨부 자료(시카고언약장로교회 연혁, ${HIST_SEED[0].year}–${HIST_SEED[HIST_SEED.length - 1].year}년, ${HIST_SEED.length}건)를 불러와 시작할 수 있습니다.<br>
+         <button class="btn primary" type="button" data-ha="importSeed">첨부 연혁 자료 불러오기</button></div>`;
+    return;
+  }
+  const order = sortHist();
+  const shown = order.filter((o) => o.i === histEdit || histMatches(o.h));
+  const groups = [];
+  shown.forEach((o) => {
+    const y = Number(o.h.year) || 0;
+    let g = groups[groups.length - 1];
+    if (!g || g.y !== y) { g = { y, items: [] }; groups.push(g); }
+    g.items.push(o);
+  });
+  if (histDescOrder) { groups.reverse(); groups.forEach((g) => g.items.reverse()); }
+  $('histInfo').textContent = shown.length === state.hist.length ? `전체 ${state.hist.length}건` : `${shown.length}건 / 전체 ${state.hist.length}건`;
+  $('histList').innerHTML = groups.length ? groups.map((g) => `
+    <div class="hyear" data-year="${g.y}">
+      <div class="hy"><span class="hyl">${g.y ? g.y + '년' : '연도 없음'}</span><span class="cnt">${g.items.length}건</span>
+        <button class="mini-add" type="button" data-ha="addIn" data-y="${g.y || ''}">+ 이 해에 추가</button></div>
+      ${g.items.map((o) => (o.i === histEdit ? histEditRow(o.i) : `
+      <div class="hrow" data-hi="${o.i}" tabindex="0"><div class="hd">${hl(o.h.date)}</div><div class="ht">${hl(o.h.text)}</div></div>`)).join('')}
+    </div>`).join('') : '<div class="hist-empty">검색 결과가 없습니다.</div>';
+}
+function sameYearNeighbor(i, dir) {
+  const y = Number(state.hist[i].year) || 0;
+  const order = sortHist().filter((o) => o.y === y).map((o) => o.i);
+  const k = order.indexOf(i) + dir;
+  return k >= 0 && k < order.length ? order[k] : -1;
+}
+function histEditRow(i) {
+  const h = state.hist[i];
+  return `<div class="hrow editing" data-hi="${i}">
+    <div>
+      <div class="hgrid">
+        <div><label class="f">연도</label><input class="inp" type="number" min="1900" max="2100" data-hf="year" value="${esc(h.year)}"></div>
+        <div><label class="f">날짜</label><input class="inp" data-hf="date" value="${esc(h.date)}" placeholder="예: 3월 6일 / 8월 23일 ~ 30일"></div>
+      </div>
+      <label class="f">내용</label>
+      <textarea class="inp" rows="2" data-hf="text" placeholder="내용">${esc(h.text)}</textarea>
+      <div class="hbtns">
+        <button type="button" data-ha="up" ${sameYearNeighbor(i, -1) < 0 ? 'disabled' : ''}>▲ 위로</button>
+        <button type="button" data-ha="down" ${sameYearNeighbor(i, 1) < 0 ? 'disabled' : ''}>▼ 아래로</button>
+        <button type="button" class="del" data-ha="del">삭제</button>
+        <button type="button" class="done" data-ha="done">완료</button>
+      </div>
+    </div></div>`;
+}
+function openHistEdit(i, field) {
+  histEdit = i; renderHist();
+  const row = $('histList').querySelector(`.hrow.editing`);
+  if (row) {
+    row.scrollIntoView({ block: 'nearest' });
+    const el = row.querySelector(`[data-hf="${field || 'text'}"]`);
+    if (el) { el.focus(); autoGrow(el); }
+    row.querySelectorAll('textarea').forEach(autoGrow);
+  }
+}
+function closeHistEdit(render = true) {
+  if (histEdit < 0) return;
+  const i = histEdit, h = state.hist[i];
+  if (h && !String(h.text).trim() && !String(h.date).trim()) state.hist.splice(i, 1);  // 빈 항목은 버림
+  histEdit = -1;
+  if (render) {
+    renderHist();
+    if (h) {
+      const k = state.hist.indexOf(h);
+      const el = k >= 0 && $('histList').querySelector(`.hrow[data-hi="${k}"]`);
+      if (el) el.scrollIntoView({ block: 'nearest' });
+    }
+  }
+}
+function addHist(year) {
+  const y = Number(year) || Number(state.hist.length ? Math.max(...state.hist.map((h) => Number(h.year) || 0)) : new Date().getFullYear());
+  closeHistEdit(false);
+  state.hist.push({ year: y, date: '', text: '' });
+  if (histDec !== 'all' && Math.floor(y / 10) * 10 !== Number(histDec)) histDec = 'all';
+  openHistEdit(state.hist.length - 1, 'date');
+}
+
+$('view-hist').addEventListener('click', (e) => {
+  const chip = e.target.closest('[data-dec]');
+  if (chip) { histDec = chip.dataset.dec; renderHist(); return; }
+  const a = e.target.closest('[data-ha]');
+  if (a) {
+    const act = a.dataset.ha;
+    if (act === 'importSeed') { state.hist = clone(HIST_SEED); setHistDirty(true); renderHist(); toast(`첨부 연혁 ${HIST_SEED.length}건을 불러왔습니다. [저장]을 눌러 시트에 기록하세요.`); return; }
+    if (act === 'addNew') { addHist(); setHistDirty(true); return; }
+    if (act === 'addIn') { addHist(a.dataset.y); setHistDirty(true); return; }
+    if (histEdit < 0) return;
+    if (act === 'done') { closeHistEdit(); return; }
+    if (act === 'del') {
+      const h = state.hist[histEdit];
+      if (!confirm(`'${(h.date ? h.date + ' ' : '') + h.text.slice(0, 30)}' 항목을 삭제할까요?`)) return;
+      state.hist.splice(histEdit, 1); histEdit = -1; setHistDirty(true); renderHist(); return;
+    }
+    if (act === 'up' || act === 'down') {
+      const j = sameYearNeighbor(histEdit, act === 'up' ? -1 : 1);
+      if (j < 0) return;
+      [state.hist[histEdit], state.hist[j]] = [state.hist[j], state.hist[histEdit]];
+      setHistDirty(true); openHistEdit(j); return;
+    }
+    return;
+  }
+  const row = e.target.closest('.hrow[data-hi]:not(.editing)');
+  if (row) { closeHistEdit(false); openHistEdit(Number(row.dataset.hi)); }
+});
+$('view-hist').addEventListener('keydown', (e) => {
+  if (e.target.matches('.hrow[data-hi]:not(.editing)') && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); e.target.click(); }
+  if (e.target.dataset && e.target.dataset.hf && (e.key === 'Escape' || (e.key === 'Enter' && (e.ctrlKey || e.metaKey)))) { e.preventDefault(); closeHistEdit(); }
+});
+$('view-hist').addEventListener('input', (e) => {
+  const f = e.target.dataset && e.target.dataset.hf;
+  if (f && histEdit >= 0) {
+    state.hist[histEdit][f] = f === 'year' ? (Number(e.target.value) || '') : e.target.value;
+    if (e.target.tagName === 'TEXTAREA') autoGrow(e.target);
+    setHistDirty(true);
+    return;
+  }
+  if (e.target.id === 'histQ') { histQ = e.target.value.trim(); renderHist(); }
+});
+$('histDesc').addEventListener('change', (e) => { histDescOrder = e.target.checked; renderHist(); });
+
+function renderHistDoc() {
+  const order = sortHist().filter((o) => String(o.h.text).trim() || String(o.h.date).trim());
+  $('pageStyle').textContent = '@page { size: letter portrait; margin: 14mm 12mm; }';
+  if (!order.length) { $('histSheet').innerHTML = '<div class="empty">연혁이 없습니다. \'교회 연혁\' 탭에서 입력하세요.</div>'; return; }
+  let html = '<h1>시카고언약장로교회 연혁</h1><table class="hdoc"><colgroup><col style="width:11%"><col style="width:17%"><col></colgroup><tbody>';
+  for (let k = 0, g = 0; k < order.length; g++) {
+    let m = k; while (m + 1 < order.length && order[m + 1].y === order[k].y) m++;
+    for (let r = k; r <= m; r++) {
+      const h = order[r].h;
+      html += (g % 2 === 0 ? '<tr class="alt">' : '<tr>') + (r === k ? `<td class="y" rowspan="${m - k + 1}">${order[k].y ? order[k].y + '년' : ''}</td>` : '') +
+        `<td class="d">${esc(h.date)}</td><td class="t">${esc(h.text)}</td></tr>`;
+    }
+    k = m + 1;
+  }
+  $('histSheet').innerHTML = html + '</tbody></table>';
+}
+
+/* ---------- 시작 ---------- */
+(async function init() {
+  showBanner();
+  setLoading(true);
+  try {
+    const r = await apiYears();
+    state.years = (r.years || []).map(Number);
+    const y = state.years[0] || new Date().getFullYear();
+    await loadYear(y);
+    await loadHistory();
+  } catch (err) {
+    $('banner').innerHTML = `<div class="banner error">${esc(err.message)} — API_URL 과 웹 앱 배포 설정(액세스: 모든 사용자)을 확인해 주세요.</div>`;
+    state.year = new Date().getFullYear(); renderAll();
+  } finally { setLoading(false); }
+})();
+</script>
 </body>
 </html>
