@@ -813,24 +813,22 @@
         titleEl.innerHTML = '<i class="ti ti-sitemap"></i>&nbsp;교회 부서 조직표 · 2026년';
       }
 
-      frame.src = ORG_URL;
+      /* 조회모드: ?mode=view 파라미터로 Org-Chart 앱 내부에서 미리보기 전환 */
+      frame.src = isViewMode ? ORG_URL + '?mode=view' : ORG_URL;
       document.getElementById('iframeOverlay').classList.add('open');
 
       frame.onload = function () {
         try {
           const doc = frame.contentDocument || frame.contentWindow.document;
-          const win = frame.contentWindow;
 
           /* ── 모바일 뷰포트: 전체 축소 후 핀치 줌 허용 ── */
-          // 1) 조직표 앱의 viewport 메타를 핀치 줌 허용으로 교체
           let vp = doc.querySelector('meta[name="viewport"]');
           if (!vp) { vp = doc.createElement('meta'); vp.name = 'viewport'; doc.head.appendChild(vp); }
           vp.content = 'width=device-width, initial-scale=0.6, minimum-scale=0.3, maximum-scale=4, user-scalable=yes';
 
-          // 2) 모바일 전용 CSS 주입
+          /* 모바일 전용 CSS 주입 */
           const mobileStyle = doc.createElement('style');
           mobileStyle.textContent = `
-            /* 모바일: 전체를 화면에 맞게 축소, 핀치 줌으로 확대 가능 */
             @media (max-width: 768px) {
               html { touch-action: pan-x pan-y pinch-zoom; }
               body { min-width: 0 !important; overflow-x: auto; }
@@ -846,8 +844,8 @@
           `;
           doc.head.appendChild(mobileStyle);
 
+          /* 조회모드: 불필요 UI 숨김 CSS 주입 */
           if (isViewMode) {
-            /* 조회모드: 불필요 요소 숨김 — 로딩 중에도 즉시 적용 */
             const style = doc.createElement('style');
             style.textContent = `
               nav.tabs                          { display: none !important; }
@@ -859,40 +857,6 @@
               #orgPrintBtn                      { display: none !important; }
             `;
             doc.head.appendChild(style);
-          }
-
-          /* 로딩 완료 후 미리보기 탭으로 전환 */
-          function switchToPreview() {
-            /* 미리보기 탭 클릭 */
-            doc.querySelectorAll('button.tab[data-view]').forEach(t => {
-              if (t.getAttribute('data-view') === 'preview') t.click();
-            });
-            /* 부서조직표 선택 */
-            setTimeout(() => {
-              doc.querySelectorAll('[data-pv]').forEach(b => {
-                if (b.getAttribute('data-pv') === 'table') b.click();
-              });
-              /* 조회모드: 미리보기 섹션 확실히 표시 */
-              if (isViewMode) {
-                const pv = doc.getElementById('view-preview');
-                if (pv) { pv.hidden = false; pv.style.display = 'block'; }
-              }
-            }, 200);
-          }
-
-          const loadingEl = doc.getElementById('loading');
-          if (loadingEl && loadingEl.classList.contains('on')) {
-            /* 로딩 중 — #loading.on 클래스가 사라질 때까지 대기 */
-            const observer = new win.MutationObserver(() => {
-              if (!loadingEl.classList.contains('on')) {
-                observer.disconnect();
-                setTimeout(switchToPreview, 150);
-              }
-            });
-            observer.observe(loadingEl, { attributes: true, attributeFilter: ['class'] });
-          } else {
-            /* 이미 로딩 완료 */
-            switchToPreview();
           }
 
         } catch (e) {
