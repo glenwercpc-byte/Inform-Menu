@@ -810,11 +810,11 @@
       if (isViewMode) {
         titleEl.innerHTML = '<i class="ti ti-eye"></i>&nbsp;교회 부서 조직표 · 2026년 (조회모드)';
       } else {
-        titleEl.innerHTML = '<i class="ti ti-sitemap"></i>&nbsp;교회 부서 조직표 · 2026년';
+        titleEl.innerHTML = '<i class="ti ti-sitemap"></i>&nbsp;교회 부서 조직표 · 2026년 (관리모드)';
       }
 
-      /* 조회모드: ?mode=view 파라미터로 Org-Chart 앱 내부에서 미리보기 전환 */
-      frame.src = isViewMode ? ORG_URL + '?mode=view' : ORG_URL;
+      /* 조회모드: ?mode=view, 관리모드: ?mode=admin — Org-Chart 앱 내부에서 미리보기 전환 */
+      frame.src = isViewMode ? ORG_URL + '?mode=view' : ORG_URL + '?mode=admin';
       document.getElementById('iframeOverlay').classList.add('open');
 
       frame.onload = function () {
